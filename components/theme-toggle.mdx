@@ -1,0 +1,184 @@
+---
+title: "ThemeToggle Component"
+description: "Dark/light mode switcher with smooth animations"
+---
+
+## Overview
+
+The `ThemeToggle` component provides a button that toggles between light and dark themes. It features animated sun and moon icons, persists user preference to localStorage, and respects system color scheme preferences.
+
+## Props
+
+The ThemeToggle component accepts no props.
+
+## Features
+
+- **Visual Feedback:** Animated sun/moon icon transition
+- **localStorage Persistence:** Saves theme preference across sessions
+- **System Preference Detection:** Respects `prefers-color-scheme` media query
+- **Custom Element:** Uses Web Components for theme management
+- **Smooth Animations:** Sliding indicator with transform transitions
+- **Accessibility:** ARIA attributes for screen readers
+
+## Usage
+
+```astro
+---
+import ThemeToggle from '../components/ThemeToggle.astro';
+---
+
+<ThemeToggle />
+```
+
+## Real-World Example
+
+### In Nav Component
+
+From `src/components/Nav.astro:74-76`:
+
+```astro
+<div class="theme-toggle">
+  <ThemeToggle />
+</div>
+```
+
+The theme toggle appears in the navigation menu, in the footer on mobile and on the right side on desktop.
+
+## How It Works
+
+### Theme Detection Priority
+
+1. **localStorage:** If a theme preference is stored, use it
+2. **System Preference:** Otherwise, check `prefers-color-scheme: dark`
+3. **Default:** Falls back to light mode
+
+### JavaScript Functionality
+
+The component includes a custom `ThemeToggle` Web Component:
+
+```javascript
+class ThemeToggle extends HTMLElement {
+  constructor() {
+    super();
+    const button = this.querySelector('button');
+    
+    // Set theme to dark/light mode
+    const setTheme = (dark) => {
+      document.documentElement.classList[dark ? 'add' : 'remove']('theme-dark');
+      button.setAttribute('aria-pressed', String(dark));
+      localStorage.setItem('theme', dark ? 'dark' : 'light');
+    };
+    
+    // Toggle on click
+    button.addEventListener('click', () => setTheme(!this.isDark()));
+    
+    // Initialize from localStorage or system preference
+    const themePref = localStorage.getItem('theme');
+    const dark = themePref === 'dark' || 
+                 (!themePref && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    setTheme(dark);
+  }
+}
+```
+
+### CSS Class Toggle
+
+When activated, the component adds the `theme-dark` class to `<html>`:
+
+```javascript
+document.documentElement.classList.add('theme-dark');
+```
+
+This triggers all theme-specific CSS throughout the site.
+
+## Visual Design
+
+The toggle features a pill-shaped button with two icons:
+- **Sun icon:** Represents light mode
+- **Moon icon:** Represents dark mode
+
+A sliding background indicator moves between the icons to show the current theme.
+
+### Animation
+
+From `src/components/ThemeToggle.astro:36-46`:
+
+```css
+.icon.light::before {
+  content: '';
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  background-color: var(--accent-regular);
+  border-radius: 999rem;
+}
+
+:global(.theme-dark) .icon.light::before {
+  transform: translateX(100%);
+}
+```
+
+The indicator smoothly transitions using CSS transforms when the theme changes.
+
+## Integration with Global Theme System
+
+The ThemeToggle works in conjunction with the theme initialization script in `MainHead.astro`. This ensures:
+
+1. Theme is applied immediately on page load (blocking script)
+2. No flash of wrong theme on navigation
+3. Theme persists across page refreshes
+4. System preference is respected on first visit
+
+From `src/components/MainHead.astro:32-51`:
+
+```javascript
+const getThemePreference = () => {
+  if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+    return localStorage.getItem('theme');
+  }
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+};
+
+const isDark = getThemePreference() === 'dark';
+document.documentElement.classList[isDark ? 'add' : 'remove']('theme-dark');
+```
+
+## Accessibility
+
+- **ARIA Pressed:** Button uses `aria-pressed` to indicate toggle state
+- **Screen Reader Text:** `.sr-only` text describes the theme
+- **Keyboard Accessible:** Full keyboard navigation support
+- **Visual Feedback:** Color changes clearly indicate current state
+- **Reduced Motion:** Respects `prefers-reduced-motion` for animations
+
+## Styling with CSS Variables
+
+The component uses these theme variables:
+
+- `--gray-999` - Button background
+- `--accent-overlay` - Border and default icon color
+- `--accent-regular` - Active indicator background
+- `--accent-text-over` - Active icon color
+- `--theme-transition` - Animation duration
+
+<Note>
+The theme toggle requires the Icon component to render the sun and moon icons.
+</Note>
+
+<Tip>
+The theme preference is stored in localStorage with the key `"theme"` and values `"light"` or `"dark"`.
+</Tip>
+
+## Forced Colors Mode
+
+The component includes special styling for Windows High Contrast Mode:
+
+```css
+@media (forced-colors: active) {
+  .icon.light::before {
+    background-color: SelectedItem;
+  }
+}
+```
+
+This ensures the toggle remains usable in high contrast themes.

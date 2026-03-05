@@ -1,0 +1,129 @@
+---
+title: "Icon Component"
+description: "SVG icon component with color and gradient support"
+---
+
+## Overview
+
+The `Icon` component renders SVG icons from a predefined icon library. It supports custom colors, gradients, and sizing, making it a versatile component for adding visual elements throughout the portfolio.
+
+## Props
+
+<ParamField path="icon" type="keyof typeof iconPaths" required>
+  The name of the icon to display. Available icons are defined in `IconPaths.ts`.
+</ParamField>
+
+<ParamField path="color" type="string" default="currentcolor">
+  The color of the icon. Can be any valid CSS color value.
+</ParamField>
+
+<ParamField path="gradient" type="boolean" default={false}>
+  Whether to apply a gradient fill to the icon instead of a solid color.
+</ParamField>
+
+<ParamField path="size" type="string">
+  Custom size for the icon. Accepts any CSS size value (e.g., "1.5em", "24px").
+</ParamField>
+
+## Usage
+
+### Basic Icon
+
+```astro
+---
+import Icon from '../components/Icon.astro';
+---
+
+<Icon icon="code" />
+```
+
+### Colored Icon
+
+```astro
+<Icon icon="terminal-window" color="var(--accent-regular)" />
+```
+
+### Icon with Gradient
+
+```astro
+<Icon icon="rocket-launch" gradient />
+```
+
+### Custom Sized Icon
+
+```astro
+<Icon icon="list" size="1.6em" />
+```
+
+## Real-World Examples
+
+### Homepage Roles
+
+From `src/pages/index.astro:72-74`:
+
+```astro
+<Pill><Icon icon="code" size="1.33em" /> Developer</Pill>
+<Pill><Icon icon="rocket-launch" size="1.33em" /> AI Specialist</Pill>
+<Pill><Icon icon="terminal-window" size="1.33em" /> Automation Engineer</Pill>
+```
+
+### Navigation Logo
+
+From `src/components/Nav.astro:27`:
+
+```astro
+<Icon icon="terminal-window" color="var(--accent-regular)" size="1.6em" gradient />
+```
+
+### Call to Action Arrows
+
+From `src/pages/index.astro:111`:
+
+```astro
+<CallToAction href="/work/">
+  View All
+  <Icon icon="arrow-right" size="1.2em" />
+</CallToAction>
+```
+
+## Available Icons
+
+Common icons available in the portfolio:
+
+- **Development:** `code`, `terminal-window`, `github-logo`
+- **Social Media:** `twitter-logo`, `youtube-logo`, `dribbble-logo`, `codepen-logo`, `twitch-logo`
+- **Navigation:** `arrow-right`, `list`, `menu`
+- **UI Elements:** `sun`, `moon-stars` (for theme toggle)
+- **General:** `rocket-launch`, `pencil-line`, `strategy`
+
+<Note>
+The complete list of available icons is defined in `src/components/IconPaths.ts`. To add new icons, add their SVG path data to this file.
+</Note>
+
+## Implementation Details
+
+The Icon component:
+- Uses a 256x256 viewBox for consistent scaling
+- Defaults to 1em width/height for inline text alignment
+- Supports gradient overlays with unique IDs to prevent conflicts
+- Sets `aria-hidden="true"` for decorative icons
+
+## Gradient System
+
+When `gradient={true}` is used, the component generates a unique gradient ID and applies a linear gradient with three color stops using CSS custom properties:
+
+```css
+--gradient-stop-1
+--gradient-stop-2  
+--gradient-stop-3
+```
+
+These gradient colors are defined in the global CSS theme system.
+
+## Accessibility
+
+Icons are marked as `aria-hidden="true"` by default. When using icons to convey meaning (not just decoration), wrap them in elements with appropriate ARIA labels or provide alternative text.
+
+<Tip>
+Use the `size` prop with em units to make icons scale proportionally with surrounding text.
+</Tip>

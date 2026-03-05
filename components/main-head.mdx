@@ -1,0 +1,202 @@
+---
+title: "MainHead Component"
+description: "HTML head management with meta tags, fonts, and theme initialization"
+---
+
+## Overview
+
+The `MainHead` component manages the HTML `<head>` section of the page, including meta tags, fonts, favicon, and critical theme initialization scripts. It ensures proper SEO, performance, and prevents flash of unstyled content.
+
+## Props
+
+<ParamField path="title" type="string" default="JUΛN ROCCIΛ">
+  The page title displayed in browser tabs and search results.
+</ParamField>
+
+<ParamField path="description" type="string" default="The personal site of Juan Roccia">
+  Meta description for SEO and social sharing.
+</ParamField>
+
+## Usage
+
+```astro
+---
+import MainHead from '../components/MainHead.astro';
+---
+
+<head>
+  <MainHead 
+    title="About - Juan Roccia" 
+    description="Learn about Juan Roccia's background and expertise"
+  />
+</head>
+```
+
+## Real-World Example
+
+### In BaseLayout
+
+From `src/layouts/BaseLayout.astro`:
+
+```astro
+<!doctype html>
+<html lang="en">
+  <head>
+    <MainHead title={title} description={description} />
+  </head>
+  <body>
+    <!-- Page content -->
+  </body>
+</html>
+```
+
+## Features Included
+
+### View Transitions
+
+Enables Astro's View Transitions for smooth page navigation:
+
+```astro
+<ClientRouter />
+```
+
+This provides SPA-like navigation without full page reloads.
+
+### Meta Tags
+
+Essential meta tags for SEO and responsiveness:
+
+```html
+<meta charset="UTF-8" />
+<meta name="description" property="og:description" content={description} />
+<meta name="viewport" content="width=device-width" />
+<meta name="generator" content={Astro.generator} />
+<title>{title}</title>
+```
+
+### Favicon
+
+Links to the site's SVG favicon:
+
+```html
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+```
+
+### Google Fonts
+
+Preconnects and loads the site's fonts for optimal performance:
+
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,400;0,700;1,400&family=Rubik:wght@500;600&display=swap"
+  rel="stylesheet"
+/>
+```
+
+**Fonts Used:**
+- **Public Sans:** Body text (400, 700 weights, plus italic)
+- **Rubik:** Brand/heading text (500, 600 weights)
+
+### Critical Theme Script
+
+An inline, blocking script that prevents flash of wrong theme on page load:
+
+```javascript
+<script is:inline>
+  const getThemePreference = () => {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+      return localStorage.getItem('theme');
+    }
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  };
+  
+  const isDark = getThemePreference() === 'dark';
+  document.documentElement.classList[isDark ? 'add' : 'remove']('theme-dark');
+
+  if (typeof localStorage !== 'undefined') {
+    const observer = new MutationObserver(() => {
+      const isDark = document.documentElement.classList.contains('theme-dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+    observer.observe(document.documentElement, { 
+      attributes: true, 
+      attributeFilter: ['class'] 
+    });
+  }
+</script>
+```
+
+## Theme Initialization Logic
+
+The critical script performs these tasks:
+
+1. **Check localStorage:** Looks for saved theme preference
+2. **Check System Preference:** Falls back to `prefers-color-scheme: dark`
+3. **Apply Theme Class:** Adds `theme-dark` class to `<html>` if needed
+4. **Set up Observer:** Watches for theme changes and persists to localStorage
+
+This happens **before** the page renders, ensuring zero flash of unstyled content.
+
+## Performance Optimizations
+
+### Font Loading
+
+- **Preconnect:** Establishes early connections to Google Fonts
+- **display=swap:** Shows fallback fonts immediately while custom fonts load
+- **Subset Loading:** Only loads required font weights
+
+### Inline Critical Script
+
+The theme script is inlined (`is:inline`) rather than loaded as a separate file because:
+- It must execute **synchronously** before first paint
+- It's tiny (< 1KB)
+- Prevents flash of wrong theme
+- No network request needed
+
+## CSS Import
+
+Imports the global stylesheet:
+
+```astro
+import '../styles/global.css';
+```
+
+This includes all theme variables, reset styles, and global component styles.
+
+## Integration with Theme System
+
+MainHead works together with:
+- **ThemeToggle Component:** User-facing theme switcher
+- **Global CSS:** Theme variables (`theme-dark` class selectors)
+- **MutationObserver:** Syncs theme changes to localStorage
+
+## SEO Considerations
+
+The component sets essential SEO meta tags:
+- Page title (appears in Google search results)
+- Meta description (appears in search result snippets)
+- Open Graph description (for social media sharing)
+- Viewport meta tag (for mobile responsiveness)
+
+<Tip>
+The `title` and `description` props should be unique for each page to improve SEO.
+</Tip>
+
+<Warning>
+Don't remove the `is:inline` directive from the theme script—it must execute synchronously to prevent theme flashing.
+</Warning>
+
+## Customization
+
+To customize the MainHead component:
+
+1. **Change Fonts:** Update the Google Fonts URL with your preferred fonts
+2. **Add Open Graph Tags:** Include additional OG tags for richer social sharing
+3. **Add Analytics:** Insert tracking scripts (Google Analytics, Plausible, etc.)
+4. **Update Favicon:** Change the favicon href to your icon file
+
+<Note>
+The default title uses the special characters "JUΛN ROCCIΛ" with Greek lambda (Λ) characters for visual style.
+</Note>

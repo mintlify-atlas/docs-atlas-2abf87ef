@@ -1,0 +1,109 @@
+---
+title: "Pill Component"
+description: "Styled badge component for displaying roles and tags"
+---
+
+## Overview
+
+The `Pill` component is a simple badge or tag component that displays content in a rounded, colored container. It's used on the homepage to showcase roles and skills in an visually appealing way.
+
+## Props
+
+The Pill component accepts no props—it uses the slot pattern to display its children.
+
+## Usage
+
+### Basic Pill
+
+```astro
+---
+import Pill from '../components/Pill.astro';
+---
+
+<Pill>Developer</Pill>
+```
+
+### Pill with Icon
+
+```astro
+---
+import Pill from '../components/Pill.astro';
+import Icon from '../components/Icon.astro';
+---
+
+<Pill>
+  <Icon icon="code" size="1.33em" /> Developer
+</Pill>
+```
+
+## Real-World Example
+
+### Homepage Roles Section
+
+From `src/pages/index.astro:71-75`:
+
+```astro
+<div class="roles">
+  <Pill><Icon icon="code" size="1.33em" /> Developer</Pill>
+  <Pill><Icon icon="rocket-launch" size="1.33em" /> AI Specialist</Pill>
+  <Pill><Icon icon="terminal-window" size="1.33em" /> Automation Engineer</Pill>
+</div>
+```
+
+This displays three role badges with icons in the hero section of the homepage.
+
+## Styling
+
+The Pill component includes the following built-in styles:
+
+- **Display:** Flexbox for easy icon + text alignment
+- **Padding:** 0.5rem vertical, 1rem horizontal
+- **Border:** 1px solid with accent color
+- **Background:** Uses `--accent-regular` CSS variable
+- **Border Radius:** 999rem for fully rounded edges
+- **Font Size:** `var(--text-md)` 
+- **Color:** `--accent-text-over` (white/high-contrast)
+- **White Space:** `nowrap` to prevent wrapping
+
+## CSS Variables Used
+
+The Pill component relies on these theme variables:
+
+- `--accent-regular` - Background and border color
+- `--accent-text-over` - Text color (high contrast on accent)
+- `--text-md` - Font size
+
+## Responsive Behavior
+
+On mobile (< 50em), the roles section containing Pills is hidden by default. Pills only display on tablet and desktop viewports.
+
+From `src/pages/index.astro:176-181`:
+
+```css
+@media (min-width: 50em) {
+  .roles {
+    margin-top: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+}
+```
+
+## Use Cases
+
+The Pill component is perfect for:
+
+- Role or skill badges
+- Technology tags
+- Status indicators
+- Category labels
+- Quick visual identifiers
+
+<Tip>
+Combine Pills with Icons for more expressive badges that clearly communicate their meaning.
+</Tip>
+
+<Note>
+The Pill component uses theme CSS variables, so it automatically adapts to light/dark mode changes.
+</Note>

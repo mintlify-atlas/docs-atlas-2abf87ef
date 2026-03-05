@@ -64,15 +64,15 @@
         "groups": [
           {
             "group": "Core Components",
-            "pages": ["components/hero", "components/grid", "components/portfolio-preview"]
+            "pages": ["components/hero", "components/grid", "components/portfolio-preview", "components/icon", "components/pill"]
           },
           {
             "group": "Interactive Elements",
-            "pages": ["components/call-to-action", "components/dynamic-tagline", "components/skills"]
+            "pages": ["components/call-to-action", "components/dynamic-tagline", "components/skills", "components/theme-toggle"]
           },
           {
             "group": "Layout Components",
-            "pages": ["components/base-layout", "components/contact-cta", "components/footer"]
+            "pages": ["components/base-layout", "components/nav", "components/main-head", "components/contact-cta", "components/footer"]
           }
         ]
       },
