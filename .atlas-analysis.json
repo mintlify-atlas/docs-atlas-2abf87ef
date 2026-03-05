@@ -1,0 +1,103 @@
+{
+  "projectType": "frontend",
+  "projectName": "Juan Roccia Portfolio",
+  "projectDescription": "Personal portfolio website showcasing projects in web development, AI, automation, and algorithmic trading.",
+  "theme": "palm",
+  "primaryColor": "#1474ec",
+  "lightColor": "#7fb4f4",
+  "darkColor": null,
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Overview",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": ["introduction", "about"]
+          },
+          {
+            "group": "Features",
+            "pages": ["features/portfolio-showcase", "features/responsive-design", "features/content-management"]
+          }
+        ]
+      },
+      {
+        "tab": "Projects",
+        "groups": [
+          {
+            "group": "AI & Machine Learning",
+            "pages": ["projects/audiogpt", "projects/trading-ml-sp500"]
+          },
+          {
+            "group": "Web Applications",
+            "pages": ["projects/encontrar-mascotas", "projects/portfolio-website", "projects/blog"]
+          },
+          {
+            "group": "Audio & Media",
+            "pages": ["projects/vst-plugins"]
+          },
+          {
+            "group": "Other Projects",
+            "pages": ["projects/casa-del-tapicero", "projects/gimnasio-levron", "projects/ignobiles-veritates", "projects/proyecto-upso", "projects/freelance"]
+          }
+        ]
+      },
+      {
+        "tab": "Components",
+        "groups": [
+          {
+            "group": "Core Components",
+            "pages": ["components/hero", "components/grid", "components/portfolio-preview"]
+          },
+          {
+            "group": "Interactive Elements",
+            "pages": ["components/call-to-action", "components/dynamic-tagline", "components/skills"]
+          },
+          {
+            "group": "Layout Components",
+            "pages": ["components/base-layout", "components/contact-cta", "components/footer"]
+          }
+        ]
+      },
+      {
+        "tab": "Development",
+        "groups": [
+          {
+            "group": "Setup",
+            "pages": ["development/installation", "development/configuration"]
+          },
+          {
+            "group": "Content",
+            "pages": ["development/adding-projects", "development/content-collections", "development/markdown-frontmatter"]
+          },
+          {
+            "group": "Deployment",
+            "pages": ["development/building", "development/github-pages"]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Project portfolio showcase with filtering and categorization",
+    "Responsive Astro-based architecture with content collections",
+    "Dynamic tagline component with animated text transitions",
+    "Skills section highlighting web dev, AI, and automation expertise",
+    "Work gallery with metadata (publish date, tags, images)",
+    "Contact and funding integration",
+    "Optimized for GitHub Pages deployment",
+    "Custom components for hero sections, grids, and CTAs"
+  ],
+  "publicApiSurface": [
+    "Hero component - Main header with title and tagline",
+    "PortfolioPreview component - Project card with image and metadata",
+    "Grid component - Flexible layout system with variants",
+    "Skills component - Showcases technical abilities",
+    "CallToAction component - Navigation and action buttons",
+    "DynamicTagline component - Animated text rotation",
+    "ContactCTA component - Contact section with links",
+    "BaseLayout component - Main page wrapper with nav and footer",
+    "Work content collection - Markdown-based project entries",
+    "Icon component - SVG icon system"
+  ]
+}
