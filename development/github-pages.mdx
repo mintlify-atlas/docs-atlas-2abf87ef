@@ -1,0 +1,435 @@
+---
+title: GitHub Pages Deployment
+description: Deploy the portfolio to GitHub Pages with automated CI/CD using GitHub Actions
+---
+
+Deploy your portfolio to GitHub Pages with automatic builds and deployments using GitHub Actions.
+
+## Overview
+
+The portfolio is configured to deploy automatically to GitHub Pages when you push to the `main` branch. The deployment workflow builds the site and publishes it to `https://juanroccia.github.io`.
+
+## Prerequisites
+
+Before deploying, ensure:
+
+<Steps>
+  <Step title="GitHub repository created">
+    Create a repository named `username.github.io` (replace `username` with your GitHub username):
+
+    ```bash
+    # Example for user 'juanroccia'
+    https://github.com/juanroccia/juanroccia.github.io
+    ```
+  </Step>
+
+  <Step title="Site URL configured">
+    Update `astro.config.mjs` with your GitHub Pages URL:
+
+    ```javascript astro.config.mjs
+    import { defineConfig } from 'astro/config'
+
+    export default defineConfig({
+      site: 'https://juanroccia.github.io'
+    })
+    ```
+
+    Replace `juanroccia` with your GitHub username.
+  </Step>
+
+  <Step title="Workflow file present">
+    Ensure `.github/workflows/deploy.yml` exists in your repository (already included).
+  </Step>
+</Steps>
+
+## GitHub Actions Workflow
+
+The deployment is automated using this workflow:
+
+```yaml .github/workflows/deploy.yml
+name: Deploy to GitHub Pages
+
+on:
+  # Trigger on push to main branch
+  push:
+    branches: [ main ]
+  # Allow manual workflow runs
+  workflow_dispatch:
+
+# Required permissions for GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Prevent concurrent deployments
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build with Astro
+        run: npm run build
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+```
+
+## Workflow Breakdown
+
+### Triggers
+
+```yaml
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+```
+
+- **push**: Automatically runs on every push to `main`
+- **workflow_dispatch**: Allows manual triggering from GitHub Actions tab
+
+### Permissions
+
+```yaml
+permissions:
+  contents: read      # Read repository files
+  pages: write        # Deploy to GitHub Pages
+  id-token: write     # OIDC token for verification
+```
+
+### Build Job
+
+<Steps>
+  <Step title="Checkout code">
+    ```yaml
+    - uses: actions/checkout@v4
+    ```
+    Clones the repository to the runner
+  </Step>
+
+  <Step title="Setup Node.js">
+    ```yaml
+    - uses: actions/setup-node@v4
+      with:
+        node-version: "20"
+        cache: npm
+    ```
+    Installs Node.js 20 with npm caching for faster builds
+  </Step>
+
+  <Step title="Configure Pages">
+    ```yaml
+    - uses: actions/configure-pages@v4
+    ```
+    Configures GitHub Pages settings
+  </Step>
+
+  <Step title="Install dependencies">
+    ```yaml
+    - run: npm ci
+    ```
+    Clean install from `package-lock.json` (faster and more reliable than `npm install`)
+  </Step>
+
+  <Step title="Build site">
+    ```yaml
+    - run: npm run build
+    ```
+    Builds the Astro site to `./dist/`
+  </Step>
+
+  <Step title="Upload artifact">
+    ```yaml
+    - uses: actions/upload-pages-artifact@v3
+      with:
+        path: ./dist
+    ```
+    Uploads the built site for deployment
+  </Step>
+</Steps>
+
+### Deploy Job
+
+```yaml
+deploy:
+  environment:
+    name: github-pages
+    url: ${{ steps.deployment.outputs.page_url }}
+  needs: build
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/deploy-pages@v4
+```
+
+- Waits for `build` job to complete
+- Deploys the artifact to GitHub Pages
+- Provides deployment URL in workflow output
+
+## Initial Setup
+
+Configure GitHub Pages in your repository:
+
+<Steps>
+  <Step title="Enable GitHub Pages">
+    1. Go to repository **Settings** > **Pages**
+    2. Under **Source**, select **GitHub Actions**
+    3. Save the settings
+
+    ![GitHub Pages Source](https://docs.github.com/assets/images/help/pages/github-actions-source.png)
+  </Step>
+
+  <Step title="Push workflow file">
+    Commit and push `.github/workflows/deploy.yml`:
+
+    ```bash
+    git add .github/workflows/deploy.yml
+    git commit -m "Add GitHub Pages deployment workflow"
+    git push origin main
+    ```
+  </Step>
+
+  <Step title="Monitor deployment">
+    1. Go to **Actions** tab in your repository
+    2. Watch the workflow run
+    3. Once complete, visit your site at `https://username.github.io`
+  </Step>
+</Steps>
+
+## Deployment Process
+
+Every push to `main` triggers:
+
+1. **Checkout**: Repository code is cloned
+2. **Install**: Dependencies are installed with `npm ci`
+3. **Build**: Site is built with `npm run build`
+4. **Deploy**: Built files are deployed to GitHub Pages
+5. **Live**: Site is available at your GitHub Pages URL
+
+```mermaid
+graph LR
+    A[Push to main] --> B[Build Job]
+    B --> C[Install Dependencies]
+    C --> D[Build Astro Site]
+    D --> E[Upload Artifact]
+    E --> F[Deploy Job]
+    F --> G[Deploy to Pages]
+    G --> H[Live Site]
+```
+
+## Custom Domain Setup
+
+Use a custom domain instead of `username.github.io`:
+
+<Steps>
+  <Step title="Add CNAME file">
+    Create `public/CNAME` with your domain:
+
+    ```text public/CNAME
+    www.yourdomain.com
+    ```
+
+    Or for apex domain:
+    ```text public/CNAME
+    yourdomain.com
+    ```
+  </Step>
+
+  <Step title="Update site URL">
+    Update `astro.config.mjs`:
+
+    ```javascript astro.config.mjs
+    export default defineConfig({
+      site: 'https://www.yourdomain.com'
+    })
+    ```
+  </Step>
+
+  <Step title="Configure DNS">
+    Add DNS records with your domain provider:
+
+    **For www subdomain (recommended)**:
+    ```
+    Type: CNAME
+    Name: www
+    Value: username.github.io
+    ```
+
+    **For apex domain**:
+    ```
+    Type: A
+    Name: @
+    Value: 185.199.108.153
+    Value: 185.199.109.153
+    Value: 185.199.110.153
+    Value: 185.199.111.153
+    ```
+  </Step>
+
+  <Step title="Enable custom domain in GitHub">
+    1. Go to repository **Settings** > **Pages**
+    2. Enter your custom domain
+    3. Wait for DNS check to complete
+    4. Enable **Enforce HTTPS**
+  </Step>
+</Steps>
+
+<Info>
+  DNS propagation can take up to 24 hours. Use [DNS Checker](https://dnschecker.org/) to verify.
+</Info>
+
+## Manual Deployment
+
+Trigger deployment manually:
+
+1. Go to **Actions** tab
+2. Click **Deploy to GitHub Pages** workflow
+3. Click **Run workflow**
+4. Select `main` branch
+5. Click **Run workflow** button
+
+## Monitoring Deployments
+
+Check deployment status:
+
+### Via GitHub Actions
+
+1. Navigate to **Actions** tab
+2. View workflow runs with status badges:
+   - ✅ Green: Successful
+   - ❌ Red: Failed
+   - 🟡 Yellow: In progress
+
+### Via Workflow Badge
+
+Add to README.md:
+
+```markdown
+[![Deploy](https://github.com/juanroccia/juanroccia.github.io/actions/workflows/deploy.yml/badge.svg)](https://github.com/juanroccia/juanroccia.github.io/actions/workflows/deploy.yml)
+```
+
+### Via Deployments
+
+1. Go to repository **Settings** > **Environments**
+2. Click **github-pages**
+3. View deployment history and URLs
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Workflow fails at build step">
+    **Issue**: Build errors during `npm run build`
+
+    **Solution**:
+    1. Run build locally: `npm run build`
+    2. Fix any content validation errors
+    3. Ensure all frontmatter is valid
+    4. Push fixes to `main`
+  </Accordion>
+
+  <Accordion title="Site shows 404">
+    **Issue**: GitHub Pages returns 404 after deployment
+
+    **Solution**:
+    1. Verify `site` URL in `astro.config.mjs` matches GitHub Pages URL
+    2. Check repository name is `username.github.io`
+    3. Ensure GitHub Pages is enabled in repository settings
+    4. Wait a few minutes for deployment to propagate
+  </Accordion>
+
+  <Accordion title="Assets not loading">
+    **Issue**: Images or CSS missing in production
+
+    **Solution**:
+    1. Ensure assets are in `public/` directory
+    2. Use absolute paths: `/assets/image.jpg`, not `assets/image.jpg`
+    3. Check `img` paths in frontmatter
+    4. Clear browser cache
+  </Accordion>
+
+  <Accordion title="Custom domain not working">
+    **Issue**: Custom domain shows error or redirects incorrectly
+
+    **Solution**:
+    1. Verify DNS records are correct
+    2. Wait 24h for DNS propagation
+    3. Check `public/CNAME` file exists and is correct
+    4. Ensure `site` URL in config matches custom domain
+    5. Verify custom domain in GitHub Pages settings
+  </Accordion>
+
+  <Accordion title="Workflow permission denied">
+    **Issue**: `Error: Resource not accessible by integration`
+
+    **Solution**:
+    1. Go to **Settings** > **Actions** > **General**
+    2. Under **Workflow permissions**, select **Read and write permissions**
+    3. Enable **Allow GitHub Actions to create and approve pull requests**
+    4. Save and re-run workflow
+  </Accordion>
+</AccordionGroup>
+
+## Deployment Checklist
+
+Before deploying:
+
+<Check>
+  `site` URL in `astro.config.mjs` is correct
+</Check>
+<Check>
+  `.github/workflows/deploy.yml` exists
+</Check>
+<Check>
+  GitHub Pages is enabled in repository settings
+</Check>
+<Check>
+  GitHub Pages source is set to **GitHub Actions**
+</Check>
+<Check>
+  Workflow permissions are configured
+</Check>
+<Check>
+  Build succeeds locally with `npm run build`
+</Check>
+<Check>
+  All content validates with `npm run astro check`
+</Check>
+
+## Next Steps
+
+- [Building](/development/building) - Understand the build process
+- [Configuration](/development/configuration) - Customize site settings
+- [GitHub Pages Documentation](https://docs.github.com/en/pages) - Official GitHub Pages docs

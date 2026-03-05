@@ -1,0 +1,364 @@
+---
+title: Portfolio Showcase
+description: How portfolio projects are displayed, organized, and presented
+---
+
+# Portfolio Showcase Feature
+
+The portfolio showcase is the core feature of the website, displaying Juan Roccia's work through an elegant, responsive project gallery powered by Astro's content collections.
+
+## Overview
+
+The portfolio showcase consists of two main pages:
+
+1. **Home Page** (`/index.astro`) - Featured projects (4 most recent)
+2. **Work Page** (`/work.astro`) - Complete project gallery (all projects)
+3. **Individual Project Pages** (`/work/[slug].astro`) - Detailed project information
+
+<Note>
+  All portfolio projects are sourced from Astro content collections in `/src/content/work/`, ensuring type-safe content management with automatic validation.
+</Note>
+
+## Home Page Featured Projects
+
+The home page showcases the four most recent projects, sorted by publication date:
+
+<CodeGroup>
+```astro index.astro (content fetching)
+---
+import { getCollection } from 'astro:content';
+import PortfolioPreview from '../components/PortfolioPreview.astro';
+import Grid from '../components/Grid.astro';
+
+// Content Fetching: List four most recent work projects
+const projects = (await getCollection('work'))
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
+  .slice(0, 4);
+---
+
+<section class="section with-background with-cta">
+  <header class="section-header stack gap-2 lg:gap-4">
+    <h3>Trabajos Destacados</h3>
+    <p>Estos son algunos de mis trabajos más recientes.</p>
+  </header>
+
+  <div class="gallery">
+    <Grid variant="offset">
+      {
+        projects.map((project) => (
+          <li>
+            <PortfolioPreview project={project} />
+          </li>
+        ))
+      }
+    </Grid>
+  </div>
+
+  <div class="cta">
+    <CallToAction href="/work/">
+      View All
+      <Icon icon="arrow-right" size="1.2em" />
+    </CallToAction>
+  </div>
+</section>
+```
+</CodeGroup>
+
+### Key Features:
+
+<CardGroup cols={2}>
+  <Card title="Automatic Sorting" icon="arrow-down-1-9">
+    Projects are automatically sorted by `publishDate` in descending order (newest first)
+  </Card>
+  
+  <Card title="Limited Display" icon="filter">
+    Only the 4 most recent projects appear on the home page via `.slice(0, 4)`
+  </Card>
+  
+  <Card title="CTA Integration" icon="arrow-right">
+    "View All" button directs users to the complete portfolio on `/work`
+  </Card>
+  
+  <Card title="Offset Grid" icon="grid">
+    Uses `variant="offset"` for a visually striking staggered layout
+  </Card>
+</CardGroup>
+
+## Complete Work Gallery
+
+The dedicated work page displays all portfolio projects without limitation:
+
+<CodeGroup>
+```astro work.astro
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PortfolioPreview from '../components/PortfolioPreview.astro';
+import Hero from '../components/Hero.astro';
+import Grid from '../components/Grid.astro';
+import ContactCTA from '../components/ContactCTA.astro';
+
+const projects = (await getCollection('work')).sort(
+  (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
+);
+---
+
+<BaseLayout
+  title="My Work | Juan Roccia"
+  description="Learn about Juan Roccia's most recent projects"
+>
+  <div class="stack gap-20">
+    <main class="wrapper stack gap-8">
+      <Hero
+        title="Mi Trabajo"
+        tagline="Podes ver los proyectos más recientes a continuación para hacerte una idea de mi talento y experiencia."
+        align="start"
+      />
+      <Grid variant="offset">
+        {
+          projects.map((project) => (
+            <li>
+              <PortfolioPreview project={project} />
+            </li>
+          ))
+        }
+      </Grid>
+    </main>
+    <ContactCTA />
+  </div>
+</BaseLayout>
+```
+</CodeGroup>
+
+## Project Preview Component
+
+The `PortfolioPreview` component renders individual project cards with hover effects and view transitions:
+
+<CodeGroup>
+```astro PortfolioPreview.astro
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'work'>;
+}
+
+const { data, slug } = Astro.props.project;
+---
+
+<a class="card" href={`/work/${slug}`}>
+  <span class="title" transition:name={`title-${slug}`}>
+    {data.title}
+  </span>
+  <img 
+    src={data.img} 
+    transition:name={`img-${slug}`} 
+    alt={data.img_alt || ''} 
+    loading="lazy" 
+    decoding="async" 
+  />
+</a>
+```
+</CodeGroup>
+
+### Component Features:
+
+<Steps>
+  <Step title="Type Safety">
+    Uses TypeScript `CollectionEntry<'work'>` type for full type checking and autocomplete
+  </Step>
+  
+  <Step title="View Transitions">
+    Implements Astro's view transitions API with `transition:name` for smooth page navigation
+  </Step>
+  
+  <Step title="Lazy Loading">
+    Images use `loading="lazy"` and `decoding="async"` for optimal performance
+  </Step>
+  
+  <Step title="Responsive Cards">
+    Cards adjust height and border radius based on viewport size
+  </Step>
+</Steps>
+
+## Grid Layout System
+
+The portfolio uses a custom `Grid` component with two variants:
+
+### Offset Variant (Featured Projects)
+
+<Tabs>
+  <Tab title="Mobile">
+    - Single column layout
+    - Standard grid with 1rem gap
+    - No vertical offset
+  </Tab>
+  
+  <Tab title="Desktop (≥ 50em)">
+    - Two-column grid with 4rem gap
+    - Odd items offset vertically by 7.5rem
+    - Creates dynamic staggered effect
+    - Last odd item displayed in second column without offset
+  </Tab>
+</Tabs>
+
+<CodeGroup>
+```css Grid.astro (offset variant styles)
+@media (min-width: 50em) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
+
+  .grid.offset {
+    --row-offset: 7.5rem;
+    padding-bottom: var(--row-offset);
+  }
+
+  /* Shift first item in each row vertically to create staggered effect */
+  .grid.offset > :global(:nth-child(odd)) {
+    transform: translateY(var(--row-offset));
+  }
+
+  /* If last row contains only one item, display it in the second column */
+  .grid.offset > :global(:last-child:nth-child(odd)) {
+    grid-column: 2 / 3;
+    transform: none;
+  }
+}
+```
+</CodeGroup>
+
+### Small Variant (Funding Options)
+
+Used for displaying funding options on the home page:
+
+- **Mobile**: 2-column grid with 1.5rem gap
+- **Desktop**: Flexbox layout with wrapping, centered items
+- Last odd item spans both columns on mobile
+
+## Project Metadata & Tags
+
+Each project includes rich metadata for categorization and filtering:
+
+<CodeGroup>
+```markdown audiogpt.md (example project)
+---
+title: AudioGPT
+publishDate: 2024-03-10 00:00:00
+img: /assets/stock-2.jpg
+img_alt: AudioGPT application interface
+description: |
+  Aplicación de inteligencia artificial que convierte texto a voz con diversas opciones de personalización y control.
+tags:
+  - AI
+  - Audio Generation
+  - Web App
+  - Speech Synthesis
+---
+
+## AudioGPT: Generación de voz avanzada con IA
+
+Este proyecto combina tecnologías de procesamiento de lenguaje natural y síntesis de voz...
+```
+</CodeGroup>
+
+### Metadata Fields:
+
+| Field | Type | Purpose |
+|-------|------|--------|
+| `title` | string | Project name displayed on cards |
+| `publishDate` | date | Used for sorting projects chronologically |
+| `img` | string | Path to project preview image |
+| `img_alt` | string (optional) | Alt text for accessibility |
+| `description` | string | Brief project summary |
+| `tags` | string[] | Categorization and technology tags |
+
+<Note>
+  The `publishDate` field is coerced to a Date object automatically by Zod schema validation, ensuring consistent date handling across the application.
+</Note>
+
+## Dynamic Routing
+
+Individual project pages are generated automatically using Astro's dynamic routing:
+
+```
+/src/pages/work/[...slug].astro
+```
+
+This creates a unique page for each project at `/work/[project-name]` with:
+- Full project description and details
+- Technology stack and implementation notes
+- High-quality project images
+- Related tags and metadata
+
+## Visual Design Elements
+
+### Card Styling
+
+<CardGroup cols={2}>
+  <Card title="Gradient Backgrounds" icon="palette">
+    Cards use `var(--gradient-subtle)` for a sophisticated visual effect
+  </Card>
+  
+  <Card title="Hover Effects" icon="hand-pointer">
+    Box shadow transitions on hover provide interactive feedback
+  </Card>
+  
+  <Card title="Image Overlays" icon="layer-group">
+    Project titles overlay images with semi-transparent backgrounds
+  </Card>
+  
+  <Card title="Responsive Sizing" icon="expand">
+    Cards scale from 11rem on mobile to 22rem on desktop
+  </Card>
+</CardGroup>
+
+### Section Backgrounds
+
+The portfolio section features a sophisticated background system:
+
+```css
+.with-background::before {
+  --hero-bg: var(--bg-image-subtle-2);
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  left: 50%;
+  width: 100vw;
+  aspect-ratio: calc(2.25 / var(--bg-scale));
+  top: 0;
+  transform: translateY(-75%) translateX(-50%);
+  background:
+    url('/assets/backgrounds/noise.png') top center/220px repeat,
+    var(--hero-bg) center center / var(--bg-gradient-size) no-repeat,
+    var(--gray-999);
+  background-blend-mode: overlay, normal, normal, normal;
+  mix-blend-mode: var(--bg-blend-mode);
+  z-index: -1;
+}
+```
+
+## Performance Optimizations
+
+<Steps>
+  <Step title="Static Generation">
+    All project pages are pre-rendered at build time for instant loading
+  </Step>
+  
+  <Step title="Lazy Loading">
+    Images load only when entering the viewport, reducing initial page weight
+  </Step>
+  
+  <Step title="Async Decoding">
+    Browser decodes images asynchronously without blocking the main thread
+  </Step>
+  
+  <Step title="Optimized Sorting">
+    Projects sorted once at build time, not on each page load
+  </Step>
+</Steps>
+
+<Note>
+  The portfolio showcase demonstrates Astro's strengths: type-safe content management, zero-JS by default, and excellent performance through static site generation.
+</Note>

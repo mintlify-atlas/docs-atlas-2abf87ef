@@ -1,0 +1,483 @@
+---
+title: Responsive Design
+description: Mobile-first approach, breakpoints, and device compatibility
+---
+
+# Responsive Design Features
+
+Juan Roccia's portfolio website implements a comprehensive responsive design system that provides optimal viewing experiences across all device types, from mobile phones to large desktop displays.
+
+## Mobile-First Approach
+
+The portfolio follows a mobile-first development methodology where styles are written for mobile devices first, then progressively enhanced for larger screens using media queries.
+
+<Card title="Design Philosophy" icon="mobile">
+  Base styles target mobile devices with touch-friendly interfaces and optimized layouts. Desktop enhancements are added only when additional screen space is available, ensuring a solid foundation for all users.
+</Card>
+
+### Benefits of Mobile-First
+
+<CardGroup cols={2}>
+  <Card title="Performance" icon="gauge">
+    Mobile devices load only necessary CSS, avoiding unused desktop styles that waste bandwidth
+  </Card>
+  
+  <Card title="Progressive Enhancement" icon="arrow-up">
+    Features are added as viewport size increases, never taken away
+  </Card>
+  
+  <Card title="Touch Optimization" icon="hand">
+    Touch targets and interactions are designed first, not added as an afterthought
+  </Card>
+  
+  <Card title="Content Priority" icon="list-check">
+    Forces focus on essential content and hierarchy
+  </Card>
+</CardGroup>
+
+## Breakpoint System
+
+The portfolio uses a consistent breakpoint system defined in the global stylesheet:
+
+<CodeGroup>
+```css global.css (breakpoint patterns)
+/* Mobile: Default (no media query needed) */
+/* Base styles apply to all devices */
+
+/* Desktop: 50em and above */
+@media (min-width: 50em) {
+  /* Tablet and desktop enhancements */
+}
+
+/* Large Desktop: 80em and above */
+@media (min-width: 80em) {
+  /* Wide screen optimizations */
+}
+```
+</CodeGroup>
+
+### Breakpoint Values
+
+| Breakpoint | Value | Target Devices |
+|------------|-------|----------------|
+| **Mobile** | Default (no query) | 0 - 799px | Phones in portrait/landscape |
+| **Desktop** | `min-width: 50em` | 800px+ | Tablets, laptops, desktops |
+| **Large Desktop** | `min-width: 80em` | 1280px+ | Large monitors, 4K displays |
+
+<Note>
+  The portfolio uses `em` units for media queries rather than `px` to respect user browser zoom settings and accessibility preferences. `50em` equals 800px at default browser settings (16px base font size).
+</Note>
+
+## Responsive Layout Patterns
+
+### Hero Section
+
+The hero section demonstrates sophisticated responsive behavior:
+
+<Tabs>
+  <Tab title="Mobile">
+    ```css
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .roles {
+      display: none; /* Hidden on mobile */
+    }
+
+    .hero img {
+      aspect-ratio: 5 / 4;
+      object-fit: cover;
+      object-position: top;
+      border-radius: 1.5rem;
+      box-shadow: var(--shadow-md);
+    }
+    ```
+    
+    - **Vertical stack**: Content and image arranged vertically
+    - **Centered alignment**: All elements centered for readability
+    - **Hidden pills**: Role pills hidden to save space
+    - **Optimized image**: 5:4 aspect ratio for mobile viewports
+  </Tab>
+  
+  <Tab title="Desktop (≥ 50em)">
+    ```css
+    @media (min-width: 50em) {
+      .hero {
+        display: grid;
+        grid-template-columns: 6fr 4fr;
+        padding-inline: 2.5rem;
+        gap: 3.75rem;
+      }
+
+      .roles {
+        margin-top: 0.5rem;
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+    }
+    ```
+    
+    - **Grid layout**: Two-column grid (60/40 split)
+    - **Horizontal arrangement**: Content and image side-by-side
+    - **Visible pills**: Role indicators displayed
+    - **Increased spacing**: Larger gaps between elements
+  </Tab>
+</Tabs>
+
+### About Page Grid
+
+The About page uses a sophisticated three-column grid system:
+
+<CodeGroup>
+```css about.astro (responsive grid)
+/* Mobile - Stack vertically */
+.about {
+  display: flex;
+  flex-direction: column;
+  gap: 3.5rem;
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  color: var(--gray-200);
+}
+
+/* Desktop - Three-column grid */
+@media (min-width: 50em) {
+  .about {
+    display: grid;
+    grid-template-columns: 1fr 60% 1fr;
+  }
+
+  .about > :global(:first-child) {
+    grid-column-start: 2;
+  }
+
+  section {
+    display: contents;
+    font-size: var(--text-lg);
+  }
+}
+```
+</CodeGroup>
+
+**Mobile Behavior:**
+- Simple vertical stack with flexbox
+- All content full width
+- 3.5rem gap between sections
+
+**Desktop Behavior:**
+- Three-column grid: narrow, wide (60%), narrow
+- Content centered in middle column
+- Section titles and content use CSS `display: contents` to escape section container
+- Enhanced typography sizing
+
+### Skills Grid
+
+The Skills component demonstrates progressive enhancement across three breakpoints:
+
+<Steps>
+  <Step title="Mobile (Default)">
+    ```css
+    .skills {
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+    ```
+    Single column stack with 3rem spacing between skill cards
+  </Step>
+  
+  <Step title="Desktop (≥ 50em)">
+    ```css
+    @media (min-width: 50em) {
+      .skills {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 4rem;
+      }
+    }
+    ```
+    Two-column grid layout with increased 4rem gap
+  </Step>
+  
+  <Step title="Large Desktop (≥ 80em)">
+    ```css
+    @media (min-width: 80em) {
+      .skills {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+    ```
+    Four-column grid for wide screens, showcasing all skills side-by-side
+  </Step>
+</Steps>
+
+### Portfolio Grid
+
+The portfolio grid uses the custom Grid component with responsive offset effects:
+
+<Tabs>
+  <Tab title="Mobile">
+    ```css
+    .grid {
+      display: grid;
+      grid-auto-rows: 1fr;
+      gap: 1rem;
+      list-style: none;
+      padding: 0;
+    }
+    ```
+    
+    - Single column
+    - Equal row heights
+    - Minimal 1rem gap
+    - No staggering effect
+  </Tab>
+  
+  <Tab title="Desktop (≥ 50em)">
+    ```css
+    @media (min-width: 50em) {
+      .grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+      }
+
+      .grid.offset {
+        --row-offset: 7.5rem;
+        padding-bottom: var(--row-offset);
+      }
+
+      .grid.offset > :global(:nth-child(odd)) {
+        transform: translateY(var(--row-offset));
+      }
+    }
+    ```
+    
+    - Two-column layout
+    - 4rem gap for visual breathing room
+    - Odd items offset vertically by 7.5rem
+    - Creates dynamic, magazine-style layout
+  </Tab>
+</Tabs>
+
+## Device Compatibility
+
+The portfolio is thoroughly tested and optimized for:
+
+### Mobile Devices
+
+<CardGroup cols={2}>
+  <Card title="Phones (Portrait)" icon="mobile">
+    320px - 480px width
+    - iPhone SE, iPhone 12/13/14
+    - Android phones (various sizes)
+    - Compact layouts, stacked content
+  </Card>
+  
+  <Card title="Phones (Landscape)" icon="mobile-screen">
+    481px - 767px width
+    - Wider layouts activated
+    - Improved horizontal space usage
+    - Maintains touch-friendly targets
+  </Card>
+  
+  <Card title="Tablets (Portrait)" icon="tablet">
+    768px - 1024px width
+    - iPad, Android tablets
+    - Transitional layouts
+    - Some desktop features enabled
+  </Card>
+  
+  <Card title="Tablets (Landscape)" icon="tablet-screen-button">
+    1024px+ width
+    - Full desktop experience
+    - Grid layouts activated
+    - Enhanced visual hierarchy
+  </Card>
+</CardGroup>
+
+### Desktop Displays
+
+- **Standard Laptops**: 1280px - 1920px (optimal viewing)
+- **Large Monitors**: 1920px - 2560px (multi-column layouts)
+- **4K/5K Displays**: 2560px+ (maximum content width constrained)
+
+<Note>
+  The portfolio uses a max-width wrapper of `83rem` (1328px) to prevent content from becoming too wide on large displays, maintaining optimal reading line lengths.
+</Note>
+
+## Responsive Typography
+
+The design system includes comprehensive responsive text sizing:
+
+<CodeGroup>
+```css global.css (text size variables)
+:root {
+  /* Text Sizes */
+  --text-sm: 0.875rem;    /* 14px */
+  --text-base: 1rem;      /* 16px */
+  --text-md: 1.125rem;    /* 18px */
+  --text-lg: 1.25rem;     /* 20px */
+  --text-xl: 1.625rem;    /* 26px */
+  --text-2xl: 2.125rem;   /* 34px */
+  --text-3xl: 2.625rem;   /* 42px */
+  --text-4xl: 3.5rem;     /* 56px */
+  --text-5xl: 4.5rem;     /* 72px */
+}
+```
+</CodeGroup>
+
+### Font Scaling Strategy
+
+<Steps>
+  <Step title="Base Sizes">
+    All text sizes use rem units relative to root font size (16px default)
+  </Step>
+  
+  <Step title="Semantic Headings">
+    H1-H5 tags mapped to appropriate text size variables
+  </Step>
+  
+  <Step title="Contextual Sizing">
+    Components adjust font sizes in media queries (e.g., `.section-header h3` grows from `text-2xl` to `text-4xl`)
+  </Step>
+  
+  <Step title="Accessibility">
+    Relative units respect user browser zoom settings
+  </Step>
+</Steps>
+
+## Responsive Spacing System
+
+The portfolio uses a consistent gap utility system that scales with viewport size:
+
+<CodeGroup>
+```css global.css (spacing utilities)
+/* Mobile spacing */
+.gap-2 { gap: 0.5rem; }
+.gap-4 { gap: 1rem; }
+.gap-8 { gap: 2rem; }
+.gap-10 { gap: 2.5rem; }
+.gap-15 { gap: 3.75rem; }
+.gap-20 { gap: 5rem; }
+.gap-30 { gap: 7.5rem; }
+.gap-48 { gap: 12rem; }
+
+/* Desktop spacing overrides */
+@media (min-width: 50em) {
+  .lg\:gap-2 { gap: 0.5rem; }
+  .lg\:gap-4 { gap: 1rem; }
+  .lg\:gap-8 { gap: 2rem; }
+  /* ... etc ... */
+}
+```
+</CodeGroup>
+
+## Image Responsiveness
+
+All images in the portfolio implement responsive best practices:
+
+```astro
+<img
+  width="1553"
+  height="873"
+  src="/assets/at-work.jpg"
+  alt="Juan Roccia at work with a colleague"
+  loading="lazy"
+  decoding="async"
+/>
+```
+
+<CardGroup cols={2}>
+  <Card title="Intrinsic Dimensions" icon="ruler">
+    Width and height attributes prevent layout shift during load
+  </Card>
+  
+  <Card title="Lazy Loading" icon="hourglass">
+    Images below fold load only when needed
+  </Card>
+  
+  <Card title="Async Decoding" icon="microchip">
+    Browser decodes images off main thread
+  </Card>
+  
+  <Card title="CSS Sizing" icon="maximize">
+    Global `max-width: 100%` ensures images never overflow containers
+  </Card>
+</CardGroup>
+
+### Responsive Image Styling
+
+```css
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.hero img {
+  aspect-ratio: 5 / 4;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 1.5rem;
+  box-shadow: var(--shadow-md);
+}
+```
+
+## CSS Custom Properties for Theming
+
+The responsive design leverages CSS custom properties for consistent theming across all breakpoints:
+
+<CodeGroup>
+```css global.css (theme variables)
+:root {
+  --gray-999: #ffffff;
+  --accent-regular: #7611a6;
+  --shadow-md: 0px 28px 11px rgba(9, 11, 17, 0.01), ...;
+  --theme-transition: 0.2s ease-in-out;
+}
+
+:root.theme-dark {
+  --gray-999: #090b11;
+  --accent-regular: #7611a6;
+  --shadow-md: 0px 28px 11px rgba(255, 255, 255, 0.01), ...;
+}
+```
+</CodeGroup>
+
+<Note>
+  Theme colors update automatically across all breakpoints when dark mode is activated, ensuring consistent visual experience regardless of device size.
+</Note>
+
+## Accessibility Considerations
+
+The responsive design prioritizes accessibility:
+
+<Steps>
+  <Step title="Touch Targets">
+    All interactive elements maintain minimum 44x44px touch target size on mobile
+  </Step>
+  
+  <Step title="Text Scaling">
+    Relative units (rem, em) allow text to scale with user preferences
+  </Step>
+  
+  <Step title="Focus States">
+    Visible focus indicators work across all device types
+  </Step>
+  
+  <Step title="Semantic HTML">
+    Proper heading hierarchy and landmarks aid screen reader navigation on all devices
+  </Step>
+</Steps>
+
+<Note>
+  The portfolio's mobile-first responsive design ensures that every user, regardless of device, receives an optimized, accessible experience that showcases Juan's work effectively.
+</Note>

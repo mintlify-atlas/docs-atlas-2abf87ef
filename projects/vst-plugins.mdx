@@ -1,0 +1,107 @@
+---
+title: 'VST Plugins'
+description: 'Development of VST audio plugins for music production, sound processing, and creative effects'
+icon: 'waveform'
+---
+
+<Note>
+  **Status:** In development (Demo available upon request)
+</Note>
+
+## Overview
+
+This project encompasses the development of several VST (Virtual Studio Technology) plugins designed to enhance workflow in music production and offer creative tools for producers and musicians.
+
+### The World of Digital Audio
+
+VST plugins are software components that integrate into Digital Audio Workstations (DAWs) like Ableton Live, FL Studio, or Logic Pro, expanding their capabilities with new effects, instruments, and audio processing tools.
+
+## Developed Plugins
+
+Through this project, I have created several plugins with different functionalities:
+
+<CardGroup cols={2}>
+  <Card title="Multiband Dynamics Processor" icon="sliders">
+    Precise control over different frequency ranges with independent compression, expansion, and limiting.
+  </Card>
+  
+  <Card title="Modular FM Synthesizer" icon="wave-square">
+    Virtual instrument based on frequency modulation synthesis with multiple operators and flexible modulation matrix.
+  </Card>
+  
+  <Card title="Spatialization Processor" icon="cube">
+    Tool for manipulating stereo image and creating immersive spatialization effects.
+  </Card>
+  
+  <Card title="Rhythmic Sequencer" icon="grid">
+    Rhythmic pattern generator with advanced probability and variation options.
+  </Card>
+</CardGroup>
+
+## Technologies Implemented
+
+The development of these plugins required expertise in:
+
+<AccordionGroup>
+  <Accordion title="C++ Programming">
+    Core processing engine written in C++ for optimal performance and low-level control over audio processing.
+  </Accordion>
+  
+  <Accordion title="DSP Implementation">
+    Digital Signal Processing algorithms including:
+    - Fast Fourier Transform (FFT)
+    - Convolution techniques
+    - Circuit modeling
+    - Real-time audio processing
+  </Accordion>
+  
+  <Accordion title="JUCE Framework">
+    Utilized the JUCE framework for:
+    - Creating graphical user interfaces
+    - VST functionality implementation
+    - Cross-platform compatibility
+  </Accordion>
+  
+  <Accordion title="Performance Optimization">
+    Real-time processing optimization techniques to ensure minimal latency and efficient CPU usage.
+  </Accordion>
+</AccordionGroup>
+
+## Technical Challenges Overcome
+
+The development of audio plugins presented several interesting technical challenges:
+
+<Steps>
+  <Step title="Real-time Processing">
+    Achieving real-time processing with minimal latency requirements.
+  </Step>
+  
+  <Step title="CPU Efficiency">
+    Efficient CPU management to avoid dropouts and failures during playback.
+  </Step>
+  
+  <Step title="Interface Design">
+    Designing intuitive interfaces for technically complex processes.
+  </Step>
+  
+  <Step title="Cross-platform Compatibility">
+    Ensuring compatibility with different DAWs and standards (VST, AU, AAX).
+  </Step>
+</Steps>
+
+## Impact on Workflow
+
+These plugins not only represent a technical achievement but have also significantly improved my own creative process as a music producer, allowing me to implement specific solutions for needs that were not covered by commercial plugins.
+
+<Info>
+  The experience gained in audio programming, DSP, and interface development has transferred positively to other projects requiring signal manipulation and real-time processing.
+</Info>
+
+## Technologies
+
+<CardGroup cols={4}>
+  <Card title="C++" icon="code" />
+  <Card title="JUCE" icon="waveform" />
+  <Card title="DSP" icon="chart-line" />
+  <Card title="Audio Programming" icon="music" />
+</CardGroup>

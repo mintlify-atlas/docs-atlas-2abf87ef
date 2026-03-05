@@ -1,0 +1,316 @@
+---
+title: 'ContactCTA'
+description: 'A prominent contact call-to-action section encouraging visitors to get in touch.'
+---
+
+## Overview
+
+The `ContactCTA` component is a standalone section that encourages visitors to reach out for collaboration opportunities. It combines a heading with a prominent call-to-action button and icon, styled to stand out on the page. This component is typically placed at the bottom of pages as a conversion element.
+
+## Props
+
+This component does not accept any props. The content and mailto link are hardcoded within the component.
+
+## Usage
+
+### Basic Implementation
+
+```astro
+import ContactCTA from '../components/ContactCTA.astro';
+
+<ContactCTA />
+```
+
+### At End of Page
+
+```astro
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ContactCTA from '../components/ContactCTA.astro';
+
+<BaseLayout title="About" description="About me">
+  <main>
+    <section>
+      <!-- Main content -->
+    </section>
+  </main>
+  <ContactCTA />
+</BaseLayout>
+```
+
+### Between Content Sections
+
+```astro
+<div class="stack gap-20">
+  <section class="portfolio">
+    <!-- Portfolio items -->
+  </section>
+  
+  <ContactCTA />
+  
+  <section class="testimonials">
+    <!-- Testimonials -->
+  </section>
+</div>
+```
+
+## Real-World Examples
+
+**Homepage** (`src/pages/index.astro`):
+```astro
+<BaseLayout>
+  <div class="stack gap-20 lg:gap-48">
+    <!-- Hero section -->
+    
+    <main class="wrapper stack gap-20 lg:gap-48">
+      <!-- Selected work -->
+      <!-- Mentions -->
+    </main>
+
+    <ContactCTA />
+  </div>
+</BaseLayout>
+```
+
+**Work Detail Pages** (`src/pages/work/[...slug].astro`):
+```astro
+<BaseLayout title={entry.data.title} description={entry.data.description}>
+  <div class="stack gap-20">
+    <div class="stack gap-15">
+      <header>
+        <Hero title={entry.data.title} align="start" slug={entry.slug}>
+          <!-- Project details -->
+        </Hero>
+      </header>
+      
+      <main class="wrapper">
+        <Content />
+      </main>
+    </div>
+    
+    <ContactCTA />
+  </div>
+</BaseLayout>
+```
+
+**About Page** (`src/pages/about.astro`):
+```astro
+<BaseLayout title="About" description="About Juan Roccia">
+  <div class="stack gap-20">
+    <main class="wrapper about">
+      <!-- About content -->
+      <!-- Skills section -->
+    </main>
+
+    <ContactCTA />
+  </div>
+</BaseLayout>
+```
+
+## Component Structure
+
+The component consists of:
+
+```astro
+<aside>
+  <h2>Interested in working together?</h2>
+  <CallToAction href="mailto:juanroccia@gmail.com">
+    Send Me a Message
+    <Icon icon="paper-plane-tilt" size="1.2em" />
+  </CallToAction>
+</aside>
+```
+
+### Elements
+
+1. **Aside element**: Semantic container for tangential content
+2. **H2 heading**: Engaging question to prompt action
+3. **CallToAction**: Styled button with gradient and hover effects
+4. **Icon**: Visual indicator (paper plane) for sending message
+
+## Styling Features
+
+### Layout
+
+**Mobile (< 50em)**:
+- Vertical flexbox layout
+- Centered alignment
+- 3rem gap between heading and button
+- 5rem vertical padding
+- 1.5rem horizontal padding
+
+**Desktop (≥ 50em)**:
+- Horizontal flexbox layout
+- Space-between justification
+- Wraps if needed
+- 7.5rem padding all around
+- Left-aligned heading text
+
+### Visual Design
+
+- **Background**: Semi-transparent gray (`--gray-999_40`)
+- **Borders**: Top and bottom 1px solid borders (`--gray-800`)
+- **Shadow**: Subtle box shadow (`--shadow-sm`)
+- **Typography**: 
+  - Mobile: `var(--text-xl)` heading
+  - Desktop: `var(--text-3xl)` heading
+  - Max width of 15ch on mobile for readability
+
+## Customization
+
+### Change Email Address
+
+Modify the mailto link:
+
+```astro
+<CallToAction href="mailto:your-email@example.com">
+  Send Me a Message
+  <Icon icon="paper-plane-tilt" size="1.2em" />
+</CallToAction>
+```
+
+### Change Heading Text
+
+```astro
+<h2>Let's collaborate on your next project!</h2>
+```
+
+### Change Button Text
+
+```astro
+<CallToAction href="mailto:juanroccia@gmail.com">
+  Get In Touch
+  <Icon icon="envelope" size="1.2em" />
+</CallToAction>
+```
+
+### Link to Contact Form
+
+Instead of mailto, link to a contact page:
+
+```astro
+<CallToAction href="/contact">
+  Contact Me
+  <Icon icon="arrow-right" size="1.2em" />
+</CallToAction>
+```
+
+### Add Multiple CTAs
+
+```astro
+<aside>
+  <h2>Interested in working together?</h2>
+  <div class="cta-group">
+    <CallToAction href="mailto:juanroccia@gmail.com">
+      Send Email
+      <Icon icon="paper-plane-tilt" size="1.2em" />
+    </CallToAction>
+    <CallToAction href="/contact">
+      Contact Form
+      <Icon icon="pencil" size="1.2em" />
+    </CallToAction>
+  </div>
+</aside>
+```
+
+### Make It Dynamic
+
+Accept props for customization:
+
+```astro
+---
+import CallToAction from './CallToAction.astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  heading?: string;
+  buttonText?: string;
+  href?: string;
+  icon?: string;
+}
+
+const { 
+  heading = "Interested in working together?",
+  buttonText = "Send Me a Message",
+  href = "mailto:juanroccia@gmail.com",
+  icon = "paper-plane-tilt"
+} = Astro.props;
+---
+
+<aside>
+  <h2>{heading}</h2>
+  <CallToAction href={href}>
+    {buttonText}
+    <Icon icon={icon} size="1.2em" />
+  </CallToAction>
+</aside>
+```
+
+Then use it:
+
+```astro
+<ContactCTA 
+  heading="Ready to start your project?"
+  buttonText="Let's Talk"
+  href="/contact"
+  icon="chat"
+/>
+```
+
+## Best Practices
+
+<Tip>
+  Place ContactCTA at the end of content-heavy pages to capture interested visitors at the moment they finish reading.
+</Tip>
+
+<Tip>
+  The mailto link opens the user's email client. Consider also providing an alternative like a contact form for users who prefer web forms.
+</Tip>
+
+<Warning>
+  The component uses `<aside>` which is semantically for tangential content. If this is the primary call-to-action, consider using `<section>` instead.
+</Warning>
+
+## Accessibility
+
+- Semantic `<aside>` element for proper document structure
+- Clear, actionable heading as `<h2>`
+- CallToAction component provides full keyboard accessibility
+- Icon is decorative and doesn't interfere with screen readers
+- Sufficient color contrast for text readability
+
+## Integration
+
+The component depends on:
+
+```astro
+import CallToAction from './CallToAction.astro';
+import Icon from './Icon.astro';
+```
+
+Ensure both components are available in your project.
+
+## Conversion Optimization
+
+This component is designed for conversion. Consider:
+
+- **Placement**: Most effective at natural break points or page endings
+- **Timing**: After the user has consumed enough content to be interested
+- **Copy**: Action-oriented, benefit-focused language
+- **Visual hierarchy**: Prominent but not overwhelming
+- **Single CTA**: One clear action reduces decision paralysis
+
+## Analytics Tracking
+
+Add tracking to measure effectiveness:
+
+```astro
+<CallToAction 
+  href="mailto:juanroccia@gmail.com"
+  data-analytics="contact-cta-click"
+>
+  Send Me a Message
+  <Icon icon="paper-plane-tilt" size="1.2em" />
+</CallToAction>
+```
+
+Then track with your analytics tool of choice.

@@ -1,0 +1,336 @@
+---
+title: Building
+description: Build the portfolio for production deployment and optimize output
+---
+
+Build your portfolio for production deployment with optimized assets and static HTML output.
+
+## Build Process
+
+Astro generates static HTML files at build time, creating a fast, optimized site ready for deployment.
+
+### Build Command
+
+Run the build from the project root:
+
+<CodeGroup>
+  ```bash npm
+  npm run build
+  ```
+
+  ```bash yarn
+  yarn build
+  ```
+
+  ```bash pnpm
+  pnpm build
+  ```
+</CodeGroup>
+
+This executes the `astro build` command defined in package.json:
+
+```json package.json
+{
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  }
+}
+```
+
+## Build Output
+
+The build process generates static files in the `./dist/` directory:
+
+```
+dist/
+├── index.html              # Homepage
+├── work/
+│   ├── index.html         # Projects index
+│   ├── audiogpt/
+│   │   └── index.html     # AudioGPT project page
+│   ├── vst-plugins/
+│   │   └── index.html     # VST Plugins project page
+│   └── ...
+├── assets/                 # Images from public/assets/
+│   ├── stock-2.jpg
+│   ├── stock-6.jpg
+│   └── ...
+├── _astro/                # Optimized CSS and JS
+│   ├── index.[hash].css
+│   └── ...
+└── favicon.svg            # Site favicon
+```
+
+<Info>
+  The `dist/` directory is created from scratch on each build. Never edit files in `dist/` directly - they will be overwritten.
+</Info>
+
+## Build Steps
+
+The build process includes:
+
+<Steps>
+  <Step title="Content validation">
+    Validates all content collections against their schemas:
+    ```
+    [content] Types generated
+    [content] Validated 11 entries in work collection
+    ```
+  </Step>
+
+  <Step title="Page generation">
+    Generates static HTML for all pages:
+    ```
+    [build] Generating static routes
+    [build] ✓ Completed in 324ms.
+    [build]   11 page(s) built in 1.2s
+    ```
+  </Step>
+
+  <Step title="Asset optimization">
+    Optimizes and bundles CSS, JavaScript, and images:
+    ```
+    [build] Building client assets...
+    [build] vite v5.x.x building for production...
+    [build] ✓ 42 modules transformed.
+    ```
+  </Step>
+
+  <Step title="Output finalization">
+    Writes the complete static site to `./dist/`:
+    ```
+    [build] ✓ Built in 1.58s
+    [build] Complete!
+    ```
+  </Step>
+</Steps>
+
+## Preview Build Locally
+
+Test the production build on your local machine:
+
+<CodeGroup>
+  ```bash npm
+  npm run preview
+  ```
+
+  ```bash yarn
+  yarn preview
+  ```
+
+  ```bash pnpm
+  pnpm preview
+  ```
+</CodeGroup>
+
+This starts a local server serving the `./dist/` directory:
+
+```
+  astro  v5.11.1 ready in 45 ms
+
+  ┃ Local    http://localhost:4321/
+  ┃ Network  use --host to expose
+```
+
+<Warning>
+  Always run `npm run build` before `npm run preview` to ensure you're previewing the latest changes.
+</Warning>
+
+## Build Configuration
+
+Customize the build in `astro.config.mjs`:
+
+```javascript astro.config.mjs
+import { defineConfig } from 'astro/config'
+
+export default defineConfig({
+  site: 'https://juanroccia.github.io',
+  // Build configuration
+  outDir: './dist',           // Output directory
+  build: {
+    format: 'directory',      // /page/ instead of /page.html
+    assets: '_astro'          // Asset directory name
+  }
+})
+```
+
+### Output Formats
+
+**Directory format** (default):
+```
+dist/work/audiogpt/index.html  →  /work/audiogpt/
+```
+
+**File format**:
+```javascript
+build: {
+  format: 'file'
+}
+```
+```
+dist/work/audiogpt.html  →  /work/audiogpt.html
+```
+
+## Production Optimizations
+
+Astro automatically optimizes your build:
+
+### JavaScript
+- Minification
+- Tree shaking (removes unused code)
+- Code splitting
+- Hash-based filenames for caching
+
+### CSS
+- Minification
+- Critical CSS inlining
+- Unused CSS removal
+- Hash-based filenames
+
+### HTML
+- Minification
+- Static HTML generation
+- Pre-rendered content
+
+### Images
+- Automatic optimization (with `@astrojs/image`)
+- Responsive image generation
+- Format conversion (WebP, AVIF)
+
+## Build Size Analysis
+
+Check the build output summary:
+
+```bash
+npm run build
+```
+
+Example output:
+```
+  ┃ File                                      Size     Gzip
+  ┃ dist/index.html                           4.2 kB   1.8 kB
+  ┃ dist/work/index.html                      5.1 kB   2.1 kB
+  ┃ dist/work/audiogpt/index.html            3.8 kB   1.6 kB
+  ┃ dist/_astro/index.ab4c2d8f.css           12.3 kB  3.4 kB
+  ┃
+  ┃ Total                                     142 kB   52 kB
+```
+
+## CI/CD Build
+
+The GitHub Actions workflow builds automatically on push:
+
+```yaml .github/workflows/deploy.yml
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build with Astro
+        run: npm run build
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+```
+
+<Info>
+  `npm ci` is used in CI/CD instead of `npm install` for faster, more reliable builds based on `package-lock.json`.
+</Info>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Build fails with content errors">
+    **Issue**: Content collection validation errors
+
+    **Solution**: Check frontmatter in markdown files:
+    ```bash
+    npm run astro check
+    ```
+
+    Fix any missing or invalid fields in `src/content/work/*.md`
+  </Accordion>
+
+  <Accordion title="Missing images in build">
+    **Issue**: Images not appearing in production
+
+    **Solution**: Ensure images are in `public/assets/` and frontmatter uses correct paths:
+    ```yaml
+    # Correct
+    img: /assets/project.jpg
+
+    # Incorrect (don't include 'public')
+    img: /public/assets/project.jpg
+    ```
+  </Accordion>
+
+  <Accordion title="Build is slow">
+    **Issue**: Long build times
+
+    **Solution**: 
+    - Clear cache: `rm -rf dist node_modules/.astro`
+    - Update dependencies: `npm update`
+    - Optimize large images before adding to `public/`
+  </Accordion>
+
+  <Accordion title="Out of memory error">
+    **Issue**: `JavaScript heap out of memory`
+
+    **Solution**: Increase Node.js memory:
+    ```json package.json
+    {
+      "scripts": {
+        "build": "node --max-old-space-size=4096 ./node_modules/.bin/astro build"
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Build Checklist
+
+Before deploying, verify:
+
+<CardGroup cols={2}>
+  <Card title="Content validated" icon="check">
+    All projects have valid frontmatter
+    ```bash
+    npm run astro check
+    ```
+  </Card>
+  <Card title="Build succeeds" icon="check">
+    Production build completes without errors
+    ```bash
+    npm run build
+    ```
+  </Card>
+  <Card title="Preview works" icon="check">
+    Local preview shows correct content
+    ```bash
+    npm run preview
+    ```
+  </Card>
+  <Card title="Site URL correct" icon="check">
+    `site` in `astro.config.mjs` matches deployment URL
+  </Card>
+</CardGroup>
+
+## Next Steps
+
+- [GitHub Pages](/development/github-pages) - Deploy your built site
+- [Configuration](/development/configuration) - Customize build options
+- [Adding Projects](/development/adding-projects) - Add content to build

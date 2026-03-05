@@ -1,0 +1,146 @@
+---
+title: 'Grid'
+description: 'A responsive grid layout component with offset and small variants for flexible content arrangement.'
+---
+
+## Overview
+
+The `Grid` component provides a flexible, responsive grid system for laying out content. It supports two variants: an offset grid that creates a staggered visual effect on larger screens, and a small grid optimized for displaying compact items. The component automatically adapts its layout based on screen size.
+
+## Props
+
+<ParamField path="variant" type="'offset' | 'small'">
+  Determines the grid layout style:
+  - `'offset'`: Creates a staggered effect on desktop with odd items shifted vertically
+  - `'small'`: Optimized for smaller items with tighter spacing
+  - No variant: Standard two-column grid layout
+</ParamField>
+
+## Usage
+
+### Standard Grid
+
+```astro
+import Grid from '../components/Grid.astro';
+import PortfolioPreview from '../components/PortfolioPreview.astro';
+
+<Grid>
+  <li>
+    <PortfolioPreview project={project1} />
+  </li>
+  <li>
+    <PortfolioPreview project={project2} />
+  </li>
+  <li>
+    <PortfolioPreview project={project3} />
+  </li>
+</Grid>
+```
+
+### Offset Grid
+
+Creates a staggered layout on desktop screens:
+
+```astro
+<Grid variant="offset">
+  <li>
+    <PortfolioPreview project={project1} />
+  </li>
+  <li>
+    <PortfolioPreview project={project2} />
+  </li>
+  <li>
+    <PortfolioPreview project={project3} />
+  </li>
+  <li>
+    <PortfolioPreview project={project4} />
+  </li>
+</Grid>
+```
+
+### Small Grid
+
+Ideal for tags, icons, or compact content:
+
+```astro
+<Grid variant="small">
+  <li>JavaScript</li>
+  <li>TypeScript</li>
+  <li>React</li>
+  <li>Astro</li>
+  <li>Node.js</li>
+</Grid>
+```
+
+## Real-World Examples
+
+**Homepage Portfolio Section** (`src/pages/index.astro`):
+```astro
+<Grid variant="offset">
+  {projects.map((project) => (
+    <li>
+      <PortfolioPreview project={project} />
+    </li>
+  ))}
+</Grid>
+```
+
+**Work Gallery** (`src/pages/work.astro`):
+```astro
+<Grid>
+  {workProjects.map((project) => (
+    <li>
+      <PortfolioPreview project={project} />
+    </li>
+  ))}
+</Grid>
+```
+
+## Layout Behavior
+
+### Mobile (< 50em)
+- All variants display as single column
+- Standard spacing of 1rem between items
+- Small variant uses 2 columns with 1.5rem gap
+
+### Desktop (≥ 50em)
+
+**Standard Grid:**
+- Two equal columns
+- 4rem gap between items
+- Equal row heights
+
+**Offset Grid:**
+- Two columns with 4rem gap
+- Odd items shifted down by 7.5rem
+- Padding bottom to accommodate offset
+- Last odd item in second column without offset
+
+**Small Grid:**
+- Flexbox layout with wrapping
+- Centered content
+- 2rem gap between items
+- Items have flexible basis of 20rem
+- Last odd item spans both columns on mobile
+
+## Styling Features
+
+- Automatic row height equalization with `grid-auto-rows: 1fr`
+- Smart handling of odd-numbered last items
+- Unstyled list (removes default list styling)
+- Zero padding for seamless integration
+- Responsive breakpoints at 50em
+
+## Best Practices
+
+<Tip>
+  Use the `offset` variant for portfolio items or featured content where you want to create visual interest through staggered positioning.
+</Tip>
+
+<Tip>
+  Use the `small` variant for tags, skills, or any compact repeating elements that should be centered and wrap naturally.
+</Tip>
+
+<Warning>
+  Always wrap child content in `<li>` elements since Grid renders as a `<ul>` for proper semantic HTML.
+</Warning>

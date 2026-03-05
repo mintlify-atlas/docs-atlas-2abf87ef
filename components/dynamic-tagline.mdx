@@ -1,0 +1,197 @@
+---
+title: 'DynamicTagline'
+description: 'A client-side component that displays dynamically changing taglines using JavaScript.'
+---
+
+## Overview
+
+The `DynamicTagline` component renders a dynamic, client-side generated tagline that changes on each page load. It uses an external JavaScript module to inject randomized content into the page, creating a personalized and engaging user experience.
+
+## Props
+
+This component does not accept any props. It's a self-contained component that handles its own content generation.
+
+## Usage
+
+### Basic Implementation
+
+```astro
+import DynamicTagline from '../components/DynamicTagline.astro';
+
+<DynamicTagline />
+```
+
+### In Hero Section
+
+```astro
+import Hero from '../components/Hero.astro';
+import DynamicTagline from '../components/DynamicTagline.astro';
+
+<Hero title="Hola, mi nombre es Juan Roccia" align="start">
+  <DynamicTagline />
+</Hero>
+```
+
+### With Additional Content
+
+```astro
+<div class="intro">
+  <h1>Welcome</h1>
+  <DynamicTagline />
+  <p>Additional description text...</p>
+</div>
+```
+
+## Real-World Examples
+
+**Homepage Hero** (`src/pages/index.astro`):
+```astro
+<Hero
+  title="Hola, mi nombre es Juan Roccia"
+  align="start"
+>
+  <DynamicTagline />
+  <div class="roles">
+    <!-- Role badges -->
+  </div>
+</Hero>
+```
+
+## How It Works
+
+The component consists of two parts:
+
+1. **Astro Component**: Provides a container span with id `frase-dinamica`
+2. **JavaScript Module**: External script at `/fraseDinamica.js` that:
+   - Contains an array of possible taglines
+   - Randomly selects one on page load
+   - Injects it into the span element
+
+### Component Structure
+
+```astro
+<span id="frase-dinamica"></span>
+<script type="module" src="/fraseDinamica.js"></script>
+```
+
+## JavaScript Module
+
+The component references an external JavaScript file that should be located at `/public/fraseDinamica.js`:
+
+```javascript
+// Example implementation
+const frases = [
+  "Rompo cosas y resuelvo problemas.",
+  "Me apasiona el Desarrollo Web y la Inteligencia Artificial.",
+  "Cuando de código se trata, soy el Messi del teclado.",
+  "Programo con la destreza de un asado bien hecho.",
+  // ... more phrases
+];
+
+const fraseAleatoria = frases[Math.floor(Math.random() * frases.length)];
+const elemento = document.getElementById('frase-dinamica');
+if (elemento) {
+  elemento.textContent = fraseAleatoria;
+}
+```
+
+## Commented Code Context
+
+The source file contains commented-out example phrases, showing the original concept:
+
+```javascript
+// Original Spanish phrases (commented in source):
+// "Rompe cosas y resuelvo problemas."
+// "Cuando de código se trata, soy el Messi del teclado."
+// "En el mundo del desarrollo, soy el que pone la magia."
+// "Soy el Maradona del frontend, el Gardel del backend."
+```
+
+These provide inspiration for the types of creative, personality-driven taglines the component is designed to display.
+
+## Customization
+
+### Adding New Taglines
+
+Edit `/public/fraseDinamica.js` to add or modify taglines:
+
+```javascript
+const frases = [
+  "Your custom tagline 1",
+  "Your custom tagline 2",
+  "Your custom tagline 3",
+];
+```
+
+### Styling the Tagline
+
+Target the span with CSS:
+
+```css
+#frase-dinamica {
+  font-size: 1.2rem;
+  color: var(--accent-color);
+  font-style: italic;
+}
+```
+
+### Animation Effects
+
+Add fade-in effects in the JavaScript:
+
+```javascript
+const elemento = document.getElementById('frase-dinamica');
+if (elemento) {
+  elemento.style.opacity = '0';
+  elemento.textContent = fraseAleatoria;
+  setTimeout(() => {
+    elemento.style.transition = 'opacity 0.5s';
+    elemento.style.opacity = '1';
+  }, 100);
+}
+```
+
+## Best Practices
+
+<Tip>
+  Keep taglines concise and personality-driven. They should reflect your brand voice and be engaging without being too long.
+</Tip>
+
+<Tip>
+  Ensure the JavaScript file is loaded as a module with `type="module"` for proper ES6 support.
+</Tip>
+
+<Warning>
+  The component requires JavaScript to function. The span will remain empty if JavaScript is disabled. Consider providing a fallback static tagline.
+</Warning>
+
+## Adding a Fallback
+
+For better accessibility when JavaScript is disabled:
+
+```astro
+<span id="frase-dinamica">
+  Full Stack Developer & AI Enthusiast
+</span>
+<script type="module" src="/fraseDinamica.js"></script>
+```
+
+The JavaScript will replace the default text when it loads.
+
+## Performance Considerations
+
+- Module script loads asynchronously without blocking page render
+- Lightweight implementation with minimal performance impact
+- No external dependencies required
+- Runs only on client-side (no server processing)
+
+## SEO Implications
+
+<Warning>
+  Since the content is generated client-side, search engines may not index the dynamic taglines. The initial HTML contains only an empty span.
+</Warning>
+
+If SEO is important for this content, consider:
+- Using server-side randomization in Astro instead
+- Providing static fallback text
+- Using the tagline as supplementary content only

@@ -1,0 +1,333 @@
+---
+title: 'Footer'
+description: 'The site-wide footer with copyright information and social media links.'
+---
+
+## Overview
+
+The `Footer` component provides a consistent footer across all pages of the portfolio. It displays copyright information with the current year, attribution to Astro, and social media links. The footer is responsive, switching from a vertical to horizontal layout on larger screens.
+
+## Props
+
+This component does not accept any props. All content is hardcoded within the component.
+
+## Usage
+
+### Basic Implementation
+
+The Footer is typically used within the BaseLayout and doesn't need to be imported separately in individual pages:
+
+```astro
+import Footer from '../components/Footer.astro';
+
+<Footer />
+```
+
+### In BaseLayout
+
+The footer is automatically included in BaseLayout:
+
+```astro
+<!-- src/layouts/BaseLayout.astro -->
+<body>
+  <div class="stack backgrounds">
+    <Nav />
+    <slot />
+    <Footer />
+  </div>
+</body>
+```
+
+## Real-World Implementation
+
+**BaseLayout** (`src/layouts/BaseLayout.astro`):
+```astro
+<html lang="en">
+  <head>
+    <MainHead title={title} description={description} />
+  </head>
+  <body>
+    <div class="stack backgrounds">
+      <Nav />
+      <slot />
+      <Footer />
+    </div>
+  </body>
+</html>
+```
+
+This ensures the footer appears on every page that uses BaseLayout.
+
+## Component Structure
+
+The footer consists of two main groups:
+
+```astro
+<footer>
+  <div class="group">
+    <p>Designed & Developed in Medanos with <a href="https://astro.build/">Astro</a></p>
+    <p>&copy; {currentYear} JUΛN ROCCIΛ</p>
+  </div>
+  <p class="socials">
+    <a href="https://twitter.com/juanrocciax">Twitter</a>
+    <a href="https://github.com/JuanRoccia">GitHub</a>
+    <a href="https://replit.com/@juanroccia">Replit</a>
+  </p>
+</footer>
+```
+
+### Elements
+
+1. **Group section**: Contains attribution and copyright
+   - Design credit with location
+   - Astro framework link with rocket icon
+   - Dynamic copyright year with stylized name
+
+2. **Socials section**: External profile links
+   - Twitter profile
+   - GitHub profile
+   - Replit profile
+
+## Dynamic Year
+
+The copyright year updates automatically:
+
+```astro
+---
+import Icon from './Icon.astro';
+const currentYear = new Date().getFullYear();
+---
+
+<p>&copy; {currentYear} JUΛN ROCCIΛ</p>
+```
+
+This ensures the copyright is always current without manual updates.
+
+## Styling Features
+
+### Mobile Layout (< 50em)
+
+- Vertical flexbox layout
+- Centered text alignment
+- 3rem gap between main groups
+- 3rem padding (top and sides)
+- Small font size (`--text-sm`)
+- Gray color (`--gray-400`)
+
+### Desktop Layout (≥ 50em)
+
+- Horizontal flexbox layout
+- Space-between justification
+- 2.5rem padding with 5rem horizontal
+- Group elements flow horizontally
+- 1rem gap within group
+- Socials aligned to the right
+
+### Link Styling
+
+- Gray color matching footer text
+- Transparent underline that appears on hover
+- 1px solid underline
+- 0.25em offset below text
+- Smooth transition using `--theme-transition`
+- Current color on hover/focus
+
+## Customization
+
+### Change Social Links
+
+```astro
+<p class="socials">
+  <a href="https://linkedin.com/in/yourprofile">LinkedIn</a>
+  <a href="https://twitter.com/yourhandle">Twitter</a>
+  <a href="https://github.com/yourusername">GitHub</a>
+  <a href="https://dribbble.com/yourusername">Dribbble</a>
+</p>
+```
+
+### Change Attribution Text
+
+```astro
+<div class="group">
+  <p>
+    Built with <a href="https://astro.build/">Astro</a> and deployed on Vercel
+  </p>
+  <p>&copy; {currentYear} Your Name</p>
+</div>
+```
+
+### Add Icons to Social Links
+
+```astro
+<p class="socials">
+  <a href="https://twitter.com/yourusername">
+    <Icon icon="twitter" size="1em" /> Twitter
+  </a>
+  <a href="https://github.com/yourusername">
+    <Icon icon="github-logo" size="1em" /> GitHub
+  </a>
+</p>
+```
+
+### Make Links Dynamic
+
+Accept social links as props:
+
+```astro
+---
+import Icon from './Icon.astro';
+
+interface SocialLink {
+  name: string;
+  url: string;
+  icon?: string;
+}
+
+interface Props {
+  name?: string;
+  socials?: SocialLink[];
+}
+
+const { 
+  name = "JUΛN ROCCIΛ",
+  socials = [
+    { name: "Twitter", url: "https://twitter.com/juanrocciax" },
+    { name: "GitHub", url: "https://github.com/JuanRoccia" },
+    { name: "Replit", url: "https://replit.com/@juanroccia" }
+  ]
+} = Astro.props;
+
+const currentYear = new Date().getFullYear();
+---
+
+<footer>
+  <div class="group">
+    <p>
+      Designed & Developed in Medanos with <a href="https://astro.build/">Astro</a>
+      <Icon icon="rocket-launch" size="1.2em" />
+    </p>
+    <p>&copy; {currentYear} {name}</p>
+  </div>
+  <p class="socials">
+    {socials.map((social) => (
+      <a href={social.url}>{social.name}</a>
+    ))}
+  </p>
+</footer>
+```
+
+## Special Characters
+
+The name uses special Unicode characters:
+- `JUΛN ROCCIΛ` uses Greek lambda (Λ) instead of A
+- Creates a distinctive visual signature
+- Renders properly in all modern browsers
+
+## Accessibility
+
+- Semantic `<footer>` element
+- Clear link text (no "click here" anti-patterns)
+- Sufficient color contrast for readability
+- Underline on hover provides clear affordance
+- External links open in same tab (user controls navigation)
+- Screen readers can easily identify footer landmark
+
+### Improving Accessibility
+
+Add external link indicators:
+
+```astro
+<p class="socials">
+  <a href="https://twitter.com/juanrocciax" rel="external">
+    Twitter
+    <span class="sr-only">(opens in new window)</span>
+  </a>
+</p>
+```
+
+Add visually hidden class:
+
+```css
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+```
+
+## SEO Considerations
+
+- Links to social profiles help search engines understand your online presence
+- Astro link provides attribution and relationship
+- Copyright notice establishes content ownership
+- Consistent footer across all pages aids crawlability
+
+### Add Structured Data
+
+Consider adding schema.org markup:
+
+```astro
+<footer itemscope itemtype="https://schema.org/WPFooter">
+  <div class="group">
+    <p itemprop="copyrightNotice">
+      Designed & Developed in Medanos with <a href="https://astro.build/">Astro</a>
+    </p>
+    <p>&copy; {currentYear} <span itemprop="copyrightHolder">JUΛN ROCCIΛ</span></p>
+  </div>
+  <p class="socials">
+    <a href="https://twitter.com/juanrocciax" itemprop="url">Twitter</a>
+    <a href="https://github.com/JuanRoccia" itemprop="url">GitHub</a>
+    <a href="https://replit.com/@juanroccia" itemprop="url">Replit</a>
+  </p>
+</footer>
+```
+
+## Best Practices
+
+<Tip>
+  Keep the footer simple and uncluttered. It should provide essential information without overwhelming the user.
+</Tip>
+
+<Tip>
+  Update social links to match your actual profiles. Remove any platforms you don't actively use.
+</Tip>
+
+<Warning>
+  The footer uses `margin-top: auto` to stick to the bottom of the page. Ensure the parent container uses flexbox for this to work properly.
+</Warning>
+
+## Integration
+
+The footer depends on the Icon component:
+
+```astro
+import Icon from './Icon.astro';
+```
+
+Make sure Icon.astro exists in your components directory.
+
+## Responsive Behavior
+
+The footer adapts intelligently:
+
+- **Mobile**: Stacked vertically, all centered, easy to tap
+- **Desktop**: Horizontal layout, content on left, socials on right
+- **Group wrapping**: Elements within groups wrap if space is constrained
+- **Flexible gaps**: Spacing adjusts for different screen sizes
+
+## Testing Checklist
+
+- [ ] Copyright year updates automatically
+- [ ] All social links point to correct profiles
+- [ ] Links have visible hover states
+- [ ] Footer sticks to bottom on short pages
+- [ ] Responsive layout works at all breakpoints
+- [ ] Text remains readable at small sizes
+- [ ] Icon displays correctly next to Astro link
+- [ ] External links work properly

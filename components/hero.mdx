@@ -1,0 +1,112 @@
+---
+title: 'Hero'
+description: 'A flexible hero section component with customizable alignment and support for dynamic content.'
+---
+
+## Overview
+
+The `Hero` component is a header section used to display prominent titles and taglines at the top of pages. It supports customizable text alignment, optional taglines, and slot content for additional elements. The component includes view transitions for smooth page navigations.
+
+## Props
+
+<ParamField path="title" type="string" required>
+  The main heading text displayed prominently in the hero section.
+</ParamField>
+
+<ParamField path="tagline" type="string">
+  Optional descriptive text displayed below the title. Use this to provide additional context or a subtitle.
+</ParamField>
+
+<ParamField path="align" type="'start' | 'center'" default="center">
+  Controls the text alignment of the hero section. On larger screens (50em+), `'start'` aligns content to the left, while `'center'` keeps it centered.
+</ParamField>
+
+<ParamField path="slug" type="string">
+  Optional identifier used for Astro view transitions. Links the hero title animation between pages.
+</ParamField>
+
+## Usage
+
+### Basic Hero
+
+```astro
+import Hero from '../components/Hero.astro';
+
+<Hero 
+  title="Welcome to My Portfolio" 
+  tagline="Full Stack Developer & AI Enthusiast"
+/>
+```
+
+### Hero with Left Alignment
+
+```astro
+<Hero 
+  title="About Me" 
+  tagline="Passionate about web development and artificial intelligence"
+  align="start"
+/>
+```
+
+### Hero with Slot Content
+
+```astro
+<Hero 
+  title="Contact" 
+  align="start"
+>
+  <p>Get in touch with me for collaboration opportunities.</p>
+  <a href="mailto:example@email.com">Send Email</a>
+</Hero>
+```
+
+### Hero with View Transitions
+
+```astro
+<Hero 
+  title="My Project"
+  tagline="An innovative solution"
+  slug="my-project"
+/>
+```
+
+## Real-World Examples
+
+This component is used throughout Juan Roccia's portfolio:
+
+**Homepage** (`src/pages/index.astro`):
+```astro
+<Hero
+  title="Hola, mi nombre es Juan Roccia"
+  align="start"
+>
+  <DynamicTagline />
+  <!-- Additional content -->
+</Hero>
+```
+
+**Work Pages** (`src/pages/work/[...slug].astro`):
+```astro
+<Hero title={entry.data.title} align="start" slug={entry.slug}>
+  <div class="details">
+    <div class="tags">
+      {entry.data.tags.map((t) => <Pill>{t}</Pill>)}
+    </div>
+    <p class="description">{entry.data.description}</p>
+  </div>
+</Hero>
+```
+
+## Styling Features
+
+- Responsive font sizing that scales from mobile to desktop
+- Maximum width constraint for optimal readability (37ch)
+- Automatic centering on mobile devices
+- Smooth view transitions between pages using `transition:name`
+- CSS custom properties for consistent theming
+
+## Accessibility
+
+- Uses semantic `<header>` element
+- Proper heading hierarchy with `<h1>` for titles
+- Respects user motion preferences through Astro's built-in transitions

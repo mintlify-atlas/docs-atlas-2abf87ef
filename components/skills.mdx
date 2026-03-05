@@ -1,0 +1,249 @@
+---
+title: 'Skills'
+description: 'A grid-based showcase of skills and expertise areas with icons and descriptions.'
+---
+
+## Overview
+
+The `Skills` component displays a professional skills showcase in a responsive grid layout. It presents four key expertise areas, each with an icon, title, and description. The component is hardcoded with specific skills but demonstrates a pattern that can be adapted for dynamic content.
+
+## Props
+
+This component does not accept any props. The skills are hardcoded within the component itself.
+
+## Usage
+
+### Basic Implementation
+
+```astro
+import Skills from '../components/Skills.astro';
+
+<Skills />
+```
+
+### In Page Layout
+
+```astro
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Skills from '../components/Skills.astro';
+
+<BaseLayout title="About" description="About my skills">
+  <main>
+    <section>
+      <h1>My Expertise</h1>
+      <Skills />
+    </section>
+  </main>
+</BaseLayout>
+```
+
+### With Surrounding Content
+
+```astro
+<section class="about-section">
+  <Hero title="About Me" tagline="My Skills and Expertise" />
+  <Skills />
+  <div class="additional-info">
+    <!-- More content -->
+  </div>
+</section>
+```
+
+## Real-World Examples
+
+**About Page** (`src/pages/about.astro`):
+```astro
+<BaseLayout
+  title="About | Juan Roccia"
+  description="About Juan Roccia"
+>
+  <div class="stack gap-20">
+    <main class="wrapper about">
+      <Hero
+        title="About"
+        tagline="Thanks for stopping by. Read below to learn more about myself and my background."
+      >
+        <!-- Content -->
+      </Hero>
+
+      <section>
+        <h2 class="section-title">Skills</h2>
+        <Skills />
+      </section>
+    </main>
+  </div>
+</BaseLayout>
+```
+
+## Skills Displayed
+
+The component showcases four core competency areas:
+
+### 1. Full Stack Development
+- **Icon**: terminal-window
+- **Description**: Web application development from frontend to backend using modern technologies
+
+### 2. Sistemas de Automatización (Automation Systems)
+- **Icon**: trophy
+- **Description**: Design and implementation of automated systems that optimize processes and increase operational efficiency
+
+### 3. Machine Learning & AI
+- **Icon**: strategy
+- **Description**: Intelligent solutions using machine learning and AI for content generation and predictive analysis
+
+### 4. Trading Algorítmico (Algorithmic Trading)
+- **Icon**: graph
+- **Description**: Development of trading algorithms based on statistical analysis and machine learning techniques
+
+## Component Structure
+
+Each skill section includes:
+
+```astro
+<div class="stack gap-2 lg:gap-4">
+  <Icon icon="icon-name" color="var(--accent-regular)" size="2.5rem" gradient />
+  <h2>Skill Title</h2>
+  <p>Skill description explaining the expertise area.</p>
+</div>
+```
+
+## Styling Features
+
+### Container Styling
+- Border with rounded corners (0.75rem mobile, 1.5rem desktop)
+- Semi-transparent background (`--gray-999_40`)
+- Subtle box shadow for depth
+- Padding that increases on larger screens
+
+### Layout Behavior
+
+**Mobile (< 50em)**:
+- Single column layout
+- 3rem gap between items
+- 1.5rem padding
+
+**Tablet (≥ 50em)**:
+- 2x2 grid layout
+- 4rem gap between items
+- 2.5rem padding
+- Larger heading font size (text-2xl)
+
+**Desktop (≥ 80em)**:
+- 4-column layout (all skills in one row)
+- Maintains 4rem gap
+- Same padding as tablet
+
+### Typography
+- Headings use `var(--text-lg)` on mobile, `var(--text-2xl)` on desktop
+- Description text in muted gray (`--gray-400`)
+- Consistent vertical spacing with `gap-2` (mobile) and `gap-4` (desktop)
+
+## Customization
+
+### Making Skills Dynamic
+
+To accept dynamic skills data, modify the component:
+
+```astro
+---
+import Icon from './Icon.astro';
+
+interface Skill {
+  icon: string;
+  title: string;
+  description: string;
+}
+
+interface Props {
+  skills: Skill[];
+}
+
+const { skills } = Astro.props;
+---
+
+<section class="box skills">
+  {skills.map((skill) => (
+    <div class="stack gap-2 lg:gap-4">
+      <Icon icon={skill.icon} color="var(--accent-regular)" size="2.5rem" gradient />
+      <h2>{skill.title}</h2>
+      <p>{skill.description}</p>
+    </div>
+  ))}
+</section>
+```
+
+Then use it:
+
+```astro
+<Skills skills={[
+  {
+    icon: 'code',
+    title: 'Web Development',
+    description: 'Building modern web applications...'
+  },
+  // ... more skills
+]} />
+```
+
+### Custom Icons
+
+The component uses the `Icon` component. Available icons depend on your icon set. Common options:
+- `terminal-window`, `code`, `laptop`
+- `trophy`, `star`, `medal`
+- `strategy`, `lightbulb`, `puzzle`
+- `graph`, `chart`, `analytics`
+
+### Adjusting Grid Columns
+
+Modify the responsive grid:
+
+```css
+/* 3 columns on tablet, 6 on desktop */
+@media (min-width: 50em) {
+  .skills {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 80em) {
+  .skills {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+```
+
+## Best Practices
+
+<Tip>
+  Keep skill descriptions concise (1-2 sentences). Users should be able to scan and understand your expertise quickly.
+</Tip>
+
+<Tip>
+  Choose icons that clearly represent each skill area. The visual association helps with quick comprehension.
+</Tip>
+
+<Warning>
+  If you add more than 4-6 skills, consider adjusting the grid layout to prevent overcrowding on desktop views.
+</Warning>
+
+## Accessibility
+
+- Semantic HTML with proper heading hierarchy
+- Icons include color for visual users
+- Text descriptions provide context for screen readers
+- Sufficient color contrast with gray text on dark background
+- Responsive layout ensures readability on all devices
+
+## Integration with Icon Component
+
+The Skills component depends on the `Icon` component. Make sure it's available:
+
+```astro
+import Icon from './Icon.astro';
+```
+
+Icon props used:
+- `icon`: The icon identifier
+- `color`: CSS color value
+- `size`: Icon dimensions
+- `gradient`: Boolean to apply gradient effect

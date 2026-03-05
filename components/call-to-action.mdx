@@ -1,0 +1,172 @@
+---
+title: 'CallToAction'
+description: 'A prominent button component with gradient styling and hover effects for primary actions.'
+---
+
+## Overview
+
+The `CallToAction` component is a styled link button designed for primary actions and important calls-to-action. It features an eye-catching gradient background, rounded pill shape, and smooth hover effects. The component accepts any child content, making it flexible for text and icons.
+
+## Props
+
+<ParamField path="href" type="string" required>
+  The URL or path that the button links to. Can be an internal route (e.g., `/contact`) or external URL (e.g., `https://example.com`) or mailto link (e.g., `mailto:email@example.com`).
+</ParamField>
+
+## Usage
+
+### Basic CTA
+
+```astro
+import CallToAction from '../components/CallToAction.astro';
+
+<CallToAction href="/contact">
+  Get in Touch
+</CallToAction>
+```
+
+### CTA with Icon
+
+```astro
+import CallToAction from '../components/CallToAction.astro';
+import Icon from '../components/Icon.astro';
+
+<CallToAction href="mailto:juanroccia@gmail.com">
+  Send Me a Message
+  <Icon icon="paper-plane-tilt" size="1.2em" />
+</CallToAction>
+```
+
+### External Link CTA
+
+```astro
+<CallToAction href="https://github.com/username">
+  View on GitHub
+  <Icon icon="github-logo" size="1.2em" />
+</CallToAction>
+```
+
+### Multiple CTAs
+
+```astro
+<div class="cta-group">
+  <CallToAction href="/portfolio">
+    View My Work
+  </CallToAction>
+  <CallToAction href="/contact">
+    Contact Me
+  </CallToAction>
+</div>
+```
+
+## Real-World Examples
+
+**Contact CTA Component** (`src/components/ContactCTA.astro`):
+```astro
+<aside>
+  <h2>Interested in working together?</h2>
+  <CallToAction href="mailto:juanroccia@gmail.com">
+    Send Me a Message
+    <Icon icon="paper-plane-tilt" size="1.2em" />
+  </CallToAction>
+</aside>
+```
+
+**Homepage** (`src/pages/index.astro`):
+```astro
+<Hero title="Welcome" align="start">
+  <div class="roles">
+    <CallToAction href="/work">
+      View My Portfolio
+      <Icon icon="arrow-right" size="1.2em" />
+    </CallToAction>
+  </div>
+</Hero>
+```
+
+## Styling Features
+
+### Visual Design
+- **Gradient Background**: Uses `--gradient-accent-orange` CSS variable
+- **Shape**: Fully rounded pill shape with `border-radius: 999rem`
+- **Shadow**: Medium box shadow (`--shadow-md`) for depth
+- **Spacing**: Generous padding (0.56em 2em on mobile, 1.125rem 2.5rem on desktop)
+
+### Interactive States
+- **Hover Effect**: Overlay with semi-transparent gray using mix-blend-mode
+- **Focus State**: Same overlay effect for keyboard navigation
+- **Transition**: Smooth color transition using `--theme-transition`
+
+### Typography
+- Responsive font sizing (large on mobile, extra-large on desktop)
+- White space nowrap to prevent text wrapping
+- Color optimized for contrast (`--accent-text-over`)
+- Centered text alignment
+
+## Responsive Behavior
+
+### Mobile (< 20em)
+- Base styling with medium padding
+- Standard text size
+
+### Small Screens (≥ 20em)
+- Font size: `var(--text-lg)`
+
+### Desktop (≥ 50em)
+- Increased padding: 1.125rem 2.5rem
+- Larger font size: `var(--text-xl)`
+
+## Accessibility
+
+- Uses semantic `<a>` element for proper link behavior
+- Keyboard accessible with visible focus states
+- Screen reader friendly with clear link text
+- Color contrast optimized with CSS custom properties
+- Supports text-only child content for screen readers
+
+## Customization
+
+### With Custom Content
+
+```astro
+<CallToAction href="/signup">
+  <span>Get Started</span>
+  <span class="badge">Free</span>
+</CallToAction>
+```
+
+### Multiple Lines
+
+```astro
+<CallToAction href="/download">
+  <div>
+    <div>Download Now</div>
+    <small>Available for Windows & Mac</small>
+  </div>
+</CallToAction>
+```
+
+## Best Practices
+
+<Tip>
+  Use CallToAction sparingly for the most important actions on a page. Too many CTAs can reduce their effectiveness.
+</Tip>
+
+<Tip>
+  Pair with icons to make the action more clear and visually appealing. Use icons that reinforce the action (e.g., paper-plane for sending, arrow-right for navigation).
+</Tip>
+
+<Warning>
+  The component uses `white-space: nowrap`, so very long text may overflow. Keep button text concise (2-4 words is ideal).
+</Warning>
+
+## Design Tokens
+
+The component relies on these CSS custom properties:
+
+- `--gradient-accent-orange`: Primary gradient background
+- `--accent-text-over`: Text color for contrast over gradient
+- `--shadow-md`: Box shadow for depth
+- `--theme-transition`: Timing function for smooth transitions
+- `--gray-999-basis`: Base color for overlay effect
+- `--text-lg`, `--text-xl`: Responsive font sizes

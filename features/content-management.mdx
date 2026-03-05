@@ -1,0 +1,520 @@
+---
+title: Content Management
+description: Astro content collections, Markdown entries, and schema validation
+---
+
+# Content Management System
+
+Juan Roccia's portfolio leverages Astro's powerful content collections feature to provide type-safe, schema-validated content management for portfolio projects. This system ensures data consistency while maintaining the simplicity of Markdown-based authoring.
+
+## Astro Content Collections Overview
+
+Content collections are Astro's solution for managing structured content like blog posts, portfolio projects, and documentation. They provide:
+
+<CardGroup cols={2}>
+  <Card title="Type Safety" icon="shield-check">
+    Automatic TypeScript types generated from Zod schemas
+  </Card>
+  
+  <Card title="Schema Validation" icon="check-double">
+    Frontmatter validated at build time, catching errors early
+  </Card>
+  
+  <Card title="Query API" icon="database">
+    Simple `getCollection()` API for fetching content
+  </Card>
+  
+  <Card title="Performance" icon="rocket">
+    Content pre-processed at build time for optimal runtime performance
+  </Card>
+</CardGroup>
+
+<Note>
+  Content collections live in the `/src/content/` directory and are configured in `config.ts` files within each collection folder.
+</Note>
+
+## Work Collection Configuration
+
+The portfolio's work collection is defined in `/src/content/work/config.ts`:
+
+<CodeGroup>
+```typescript config.ts
+import { defineCollection, z } from 'astro:content';
+
+export const collections = {
+  work: defineCollection({
+    schema: z.object({
+      title: z.string(),
+      description: z.string(),
+      publishDate: z.coerce.date(),
+      tags: z.array(z.string()),
+      img: z.string(),
+      img_alt: z.string().optional(),
+    }),
+  }),
+};
+```
+</CodeGroup>
+
+### Schema Breakdown
+
+Each field in the schema serves a specific purpose:
+
+| Field | Type | Required | Purpose |
+|-------|------|----------|----------|
+| `title` | `string` | Yes | Project name displayed in UI |
+| `description` | `string` | Yes | Brief project summary for preview cards |
+| `publishDate` | `date` (coerced) | Yes | Publication date for sorting (newest first) |
+| `tags` | `string[]` | Yes | Technology tags for categorization |
+| `img` | `string` | Yes | Path to project image (relative to /public) |
+| `img_alt` | `string` | No | Accessibility alt text for image |
+
+<Steps>
+  <Step title="Zod Schema Definition">
+    Zod (`z`) provides runtime validation and type inference for frontmatter
+  </Step>
+  
+  <Step title="Type Coercion">
+    `z.coerce.date()` automatically converts string dates to Date objects
+  </Step>
+  
+  <Step title="Optional Fields">
+    `.optional()` makes `img_alt` field non-required, defaulting to empty string
+  </Step>
+  
+  <Step title="Array Validation">
+    `z.array(z.string())` ensures tags is always an array of strings
+  </Step>
+</Steps>
+
+## Markdown-Based Project Entries
+
+Each portfolio project is a Markdown file in `/src/content/work/` with frontmatter and content:
+
+<CodeGroup>
+```markdown audiogpt.md
+---
+title: AudioGPT
+publishDate: 2024-03-10 00:00:00
+img: /assets/stock-2.jpg
+img_alt: AudioGPT application interface
+description: |
+  Aplicación de inteligencia artificial que convierte texto a voz con diversas opciones de personalización y control.
+tags:
+  - AI
+  - Audio Generation
+  - Web App
+  - Speech Synthesis
+---
+
+## AudioGPT: Generación de voz avanzada con IA
+
+Este proyecto combina tecnologías de procesamiento de lenguaje natural y síntesis de voz para convertir texto en audio de alta calidad con diferentes voces, acentos y estilos emocionales.
+
+### Estado: En desarrollo (próximamente disponible)
+
+### Características principales
+
+- Conversión de texto a voz con múltiples opciones de personalización
+- Selección entre diferentes voces, acentos y idiomas
+- Control de parámetros como velocidad, tono y énfasis emocional
+- Exportación de audio en diferentes formatos y calidades
+- Historial de generaciones para acceder fácilmente a conversiones anteriores
+- Interfaz responsiva que funciona en dispositivos móviles y de escritorio
+
+### Tecnologías implementadas
+
+El proyecto utiliza una combinación de tecnologías de vanguardia:
+
+- APIs de modelos avanzados de lenguaje para el procesamiento de texto
+- Algoritmos de síntesis de voz neuronal para una reproducción natural del habla
+- Frontend desarrollado con React para una experiencia de usuario fluida
+- Sistema de autenticación para guardar configuraciones y preferencias de usuario
+- Optimización del rendimiento para procesar textos largos sin pérdida de calidad
+
+### Aplicaciones prácticas
+
+AudioGPT está diseñado para servir a múltiples propósitos:
+
+- Creación de contenido para podcasts y audiolibros
+- Asistencia para personas con discapacidad visual
+- Herramienta educativa para aprendizaje de idiomas
+- Desarrollo de interfaces de voz para aplicaciones y servicios
+- Producción de voces en off para videos y presentaciones
+
+Este proyecto representa un avance significativo en la intersección entre la inteligencia artificial y la tecnología de audio, ofreciendo a los usuarios una herramienta versátil para generar contenido de voz de alta calidad con mínimo esfuerzo.
+```
+</CodeGroup>
+
+### Frontmatter Structure
+
+<Tabs>
+  <Tab title="Title & Description">
+    ```yaml
+    title: AudioGPT
+    description: |
+      Aplicación de inteligencia artificial que convierte 
+      texto a voz con diversas opciones de personalización...
+    ```
+    
+    - **Title**: Concise project name
+    - **Description**: Multi-line string using `|` for line breaks
+    - Used in preview cards and SEO metadata
+  </Tab>
+  
+  <Tab title="Date & Media">
+    ```yaml
+    publishDate: 2024-03-10 00:00:00
+    img: /assets/stock-2.jpg
+    img_alt: AudioGPT application interface
+    ```
+    
+    - **publishDate**: ISO 8601 format with time
+    - **img**: Relative path from `/public` directory
+    - **img_alt**: Descriptive text for screen readers
+  </Tab>
+  
+  <Tab title="Tags">
+    ```yaml
+    tags:
+      - AI
+      - Audio Generation
+      - Web App
+      - Speech Synthesis
+    ```
+    
+    - YAML array format
+    - Used for categorization and filtering
+    - Can represent technologies, features, or project types
+  </Tab>
+</Tabs>
+
+## Fetching Collection Data
+
+Astro provides the `getCollection()` function to query content collections:
+
+<CodeGroup>
+```astro index.astro (fetching work collection)
+---
+import { getCollection } from 'astro:content';
+
+// Fetch all projects, sort by date descending, take 4 most recent
+const projects = (await getCollection('work'))
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
+  .slice(0, 4);
+---
+
+<Grid variant="offset">
+  {
+    projects.map((project) => (
+      <li>
+        <PortfolioPreview project={project} />
+      </li>
+    ))
+  }
+</Grid>
+```
+
+```astro work.astro (fetching all projects)
+---
+import { getCollection } from 'astro:content';
+
+// Fetch and sort all projects
+const projects = (await getCollection('work')).sort(
+  (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
+);
+---
+```
+</CodeGroup>
+
+### Query Operations
+
+<Steps>
+  <Step title="Fetch Collection">
+    `await getCollection('work')` returns an array of all entries in the work collection
+  </Step>
+  
+  <Step title="Sort by Date">
+    `.sort()` arranges projects chronologically using `publishDate.valueOf()` for numeric comparison
+  </Step>
+  
+  <Step title="Limit Results">
+    `.slice(0, 4)` takes only the first 4 items (used on home page for featured projects)
+  </Step>
+  
+  <Step title="Map to Components">
+    `.map()` renders each project as a `PortfolioPreview` component
+  </Step>
+</Steps>
+
+## Type Safety in Components
+
+Content collections automatically generate TypeScript types for use in components:
+
+<CodeGroup>
+```astro PortfolioPreview.astro
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'work'>;
+}
+
+const { data, slug } = Astro.props.project;
+---
+
+<a class="card" href={`/work/${slug}`}>
+  <span class="title" transition:name={`title-${slug}`}>
+    {data.title}
+  </span>
+  <img 
+    src={data.img} 
+    transition:name={`img-${slug}`} 
+    alt={data.img_alt || ''} 
+    loading="lazy" 
+    decoding="async" 
+  />
+</a>
+```
+</CodeGroup>
+
+### Type Benefits
+
+<CardGroup cols={2}>
+  <Card title="Autocomplete" icon="keyboard">
+    IDE provides suggestions for `data.title`, `data.img`, etc.
+  </Card>
+  
+  <Card title="Error Detection" icon="circle-exclamation">
+    TypeScript catches typos like `data.titel` at development time
+  </Card>
+  
+  <Card title="Refactoring Safety" icon="arrows-rotate">
+    Changing schema automatically updates types everywhere
+  </Card>
+  
+  <Card title="Documentation" icon="book">
+    Type definitions serve as inline documentation for data shape
+  </Card>
+</CardGroup>
+
+## Dynamic Route Generation
+
+Content collections integrate seamlessly with Astro's dynamic routing:
+
+<CodeGroup>
+```astro [..slug].astro (dynamic project pages)
+---
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+// Generate static paths for all work entries
+export async function getStaticPaths() {
+  const work = await getCollection('work');
+  return work.map(entry => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+type Props = {
+  entry: CollectionEntry<'work'>;
+};
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<BaseLayout title={entry.data.title} description={entry.data.description}>
+  <article>
+    <img src={entry.data.img} alt={entry.data.img_alt} />
+    <h1>{entry.data.title}</h1>
+    <Content />
+  </article>
+</BaseLayout>
+```
+</CodeGroup>
+
+### Dynamic Routing Flow
+
+<Steps>
+  <Step title="getStaticPaths()">
+    Function runs at build time to generate all possible routes
+  </Step>
+  
+  <Step title="Map Collection Entries">
+    Each entry generates a route with `{ slug: entry.slug }` parameter
+  </Step>
+  
+  <Step title="Pass Entry as Prop">
+    Full entry object passed to page component for rendering
+  </Step>
+  
+  <Step title="Render Markdown Content">
+    `await entry.render()` compiles Markdown to HTML as `<Content />` component
+  </Step>
+</Steps>
+
+## Schema Validation Benefits
+
+The Zod schema provides runtime validation that catches errors during development:
+
+### Validation Examples
+
+<Tabs>
+  <Tab title="Missing Required Field">
+    ```markdown
+    ---
+    title: My Project
+    # ERROR: publishDate is required
+    description: A great project
+    tags: ["Web"]
+    img: /assets/project.jpg
+    ---
+    ```
+    
+    **Build Error:**
+    ```
+    [error] Content Schema Error: "publishDate" is required
+    ```
+  </Tab>
+  
+  <Tab title="Wrong Type">
+    ```markdown
+    ---
+    title: My Project
+    publishDate: 2024-03-10
+    description: A great project
+    tags: "Web, Mobile"  # ERROR: Should be array
+    img: /assets/project.jpg
+    ---
+    ```
+    
+    **Build Error:**
+    ```
+    [error] Expected array, received string
+    ```
+  </Tab>
+  
+  <Tab title="Invalid Date Format">
+    ```markdown
+    ---
+    title: My Project
+    publishDate: "March 10, 2024"  # Coerced to Date
+    description: A great project
+    tags: ["Web"]
+    img: /assets/project.jpg
+    ---
+    ```
+    
+    **Result:**
+    Successfully coerced to Date object via `z.coerce.date()`
+  </Tab>
+</Tabs>
+
+## Content Directory Structure
+
+```
+/src/content/work/
+├── config.ts              # Collection schema definition
+├── audiogpt.md           # Project entry
+├── blog.md               # Project entry
+├── casa-del-tapicero.md  # Project entry
+├── encontrar-mascotas.md # Project entry
+└── ...                   # Additional projects
+```
+
+<Note>
+  File names (minus `.md` extension) become the URL slug. For example, `audiogpt.md` creates the route `/work/audiogpt`.
+</Note>
+
+## Adding New Projects
+
+To add a new portfolio project:
+
+<Steps>
+  <Step title="Create Markdown File">
+    Create a new `.md` file in `/src/content/work/` with a URL-friendly filename
+  </Step>
+  
+  <Step title="Add Frontmatter">
+    Include all required fields (title, description, publishDate, tags, img) in YAML frontmatter
+  </Step>
+  
+  <Step title="Write Content">
+    Add project details, features, technologies, and images below the frontmatter
+  </Step>
+  
+  <Step title="Add Project Image">
+    Place the project image in `/public/assets/` and reference it in frontmatter
+  </Step>
+  
+  <Step title="Build & Verify">
+    Run `npm run build` to validate schema and generate the new project page
+  </Step>
+</Steps>
+
+<CodeGroup>
+```markdown new-project.md
+---
+title: My New Project
+publishDate: 2024-03-15 00:00:00
+img: /assets/new-project.jpg
+img_alt: Screenshot of new project interface
+description: |
+  A comprehensive description of what this project does and why it's important.
+tags:
+  - React
+  - TypeScript
+  - API Integration
+---
+
+## Project Overview
+
+Detailed information about the project...
+
+### Key Features
+
+- Feature 1
+- Feature 2
+- Feature 3
+
+### Technologies Used
+
+Description of the technology stack...
+```
+</CodeGroup>
+
+## Content Collection Advantages
+
+Using Astro content collections for portfolio management provides significant benefits:
+
+<CardGroup cols={2}>
+  <Card title="Developer Experience" icon="code">
+    Type safety, autocomplete, and instant error feedback during development
+  </Card>
+  
+  <Card title="Maintainability" icon="wrench">
+    Centralized schema makes it easy to add fields or change validation rules
+  </Card>
+  
+  <Card title="Performance" icon="gauge-high">
+    All content processed at build time, no runtime validation overhead
+  </Card>
+  
+  <Card title="Flexibility" icon="arrows-split-up-and-left">
+    Full Markdown support with frontmatter for structured data
+  </Card>
+  
+  <Card title="Portability" icon="box-archive">
+    Markdown files are plain text, easily migrated or version controlled
+  </Card>
+  
+  <Card title="Separation of Concerns" icon="layer-group">
+    Content authors work with Markdown, developers work with components
+  </Card>
+</CardGroup>
+
+<Note>
+  Astro's content collections strike the perfect balance between the simplicity of Markdown-based content and the power of type-safe, schema-validated data management - ideal for portfolio websites that need both ease of use and reliability.
+</Note>

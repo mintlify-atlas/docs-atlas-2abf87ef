@@ -1,0 +1,217 @@
+---
+title: About Juan Roccia
+description: Professional background, education, and expertise areas
+---
+
+# About Juan Roccia
+
+Juan Roccia is a versatile tech professional with expertise spanning web development, automation systems, and artificial intelligence. This page provides an overview of his background, education, and core competencies.
+
+<Note>
+  The About page is implemented in `/src/pages/about.astro` and uses the BaseLayout component for consistent site structure.
+</Note>
+
+## Professional Background
+
+Juan Roccia brings a comprehensive skill set to the technology industry, combining practical web development experience with cutting-edge expertise in automation and AI:
+
+<Card title="Core Philosophy" icon="lightbulb">
+  Bridging the gap between technical complexity and practical application, making advanced technologies accessible and beneficial for businesses and individuals.
+</Card>
+
+### Key Attributes
+
+From the About page source:
+
+> I'm a versatile professional in the tech industry with expertise across web development, automation systems, and artificial intelligence. My passion for technology drives me to continually explore emerging fields and apply cutting-edge solutions to practical problems.
+
+**Primary Focus Areas:**
+
+- Creating efficient, scalable systems that leverage automation and AI
+- Transforming complex technical concepts into practical business solutions
+- Continuous exploration of emerging technologies and methodologies
+- Delivering exceptional value through modern technology implementations
+
+## Education
+
+Juan's formal education provides a solid foundation in computer science and software development:
+
+<Steps>
+  <Step title="University Degree">
+    **Tecnicatura Universitaria en Tecnologías de Programación** - UPSO
+    
+    University-level technical degree focused on programming technologies and software development methodologies.
+  </Step>
+  
+  <Step title="Computer Science Fundamentals">
+    **Harvard CS50's Introduction to Computer Science**
+    
+    Comprehensive introduction to computer science covering algorithms, data structures, and software engineering principles.
+  </Step>
+  
+  <Step title="Continuous Learning">
+    **Self-Directed Professional Development**
+    
+    Ongoing enhancement of skills through independent learning, industry certifications, and hands-on project work.
+  </Step>
+</Steps>
+
+## Core Skills & Expertise
+
+Juan's expertise spans four primary domains, each with specialized knowledge and practical application experience:
+
+### Web Development
+
+<Card title="Full-Stack Expertise" icon="code">
+  Expert in HTML, CSS, JavaScript, PHP, and modern frameworks like React, Astro, and server-side technologies. Creates responsive, accessible, and performant websites with clean, maintainable code.
+</Card>
+
+**Technologies:**
+- Frontend: HTML5, CSS3, JavaScript (ES6+), React, Astro
+- Backend: PHP, Node.js, server-side rendering
+- Best Practices: Responsive design, accessibility (WCAG), performance optimization
+
+<CodeGroup>
+```astro about.astro (excerpt)
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ContactCTA from '../components/ContactCTA.astro';
+import Hero from '../components/Hero.astro';
+---
+
+<BaseLayout 
+  title="About | Juan Roccia" 
+  description="About Juan Roccia - Developer, AI Specialist, and Automation Engineer"
+>
+  <div class="stack gap-20">
+    <main class="wrapper about">
+      <Hero
+        title="About"
+        tagline="Thanks for stopping by. Read below to learn more about myself and my background."
+      >
+        <img
+          width="1553"
+          height="873"
+          src="/assets/at-work.jpg"
+          alt="Juan Roccia at work with a colleague"
+        />
+      </Hero>
+      <!-- Content sections -->
+    </main>
+  </div>
+</BaseLayout>
+```
+</CodeGroup>
+
+### Automation Systems
+
+<Card title="Process Optimization" icon="robot">
+  Specialized in designing and implementing automation solutions that streamline workflows and increase productivity through process automation, scripting, and system integration.
+</Card>
+
+**Capabilities:**
+- Process automation and workflow optimization
+- System integration and API orchestration
+- Custom scripting solutions
+- Creation of cohesive, efficient operational environments
+
+### Artificial Intelligence & Machine Learning
+
+<Card title="Intelligent Systems" icon="brain">
+  Proficient in developing AI solutions for content generation, data analysis, and predictive modeling using various machine learning libraries and frameworks.
+</Card>
+
+**AI Applications:**
+- Content generation systems
+- Data analysis and insights extraction
+- Predictive modeling
+- Intelligent decision-making systems
+- Natural language processing
+
+**Example Project:**
+The portfolio includes **AudioGPT**, an AI application that converts text to speech with advanced customization options, demonstrating expertise in:
+- Natural language processing
+- Neural speech synthesis
+- React frontend development
+- User authentication systems
+
+### Algorithmic Trading
+
+<Card title="FinTech Innovation" icon="chart-line">
+  Currently developing trading algorithms that leverage statistical analysis and machine learning to identify market opportunities through data-driven strategies.
+</Card>
+
+**Focus Areas:**
+- Statistical analysis and quantitative methods
+- Machine learning for pattern recognition
+- Data-driven trading strategy development
+- Financial markets and mathematics
+- Algorithm optimization and backtesting
+
+## Portfolio Structure
+
+The About page is built using Astro's component-based architecture:
+
+```
+/src/pages/about.astro
+├── BaseLayout (wrapper)
+├── Hero (page header with image)
+├── Sections:
+│   ├── Background
+│   ├── Education
+│   └── Skills
+└── ContactCTA (call-to-action footer)
+```
+
+### Responsive Layout Implementation
+
+The About page uses a sophisticated responsive grid system:
+
+<Tabs>
+  <Tab title="Mobile (< 50em)">
+    - Single column layout
+    - Vertical stack with 3.5rem gap
+    - Full-width content sections
+    - Touch-optimized spacing
+  </Tab>
+  
+  <Tab title="Desktop (≥ 50em)">
+    - Three-column grid: `1fr 60% 1fr`
+    - Content centered in middle column
+    - Section titles in first column
+    - Section content spans columns 2-4
+    - Enhanced typography sizing
+  </Tab>
+</Tabs>
+
+<CodeGroup>
+```css about.astro (styles)
+@media (min-width: 50em) {
+  .about {
+    display: grid;
+    grid-template-columns: 1fr 60% 1fr;
+  }
+
+  .about > :global(:first-child) {
+    grid-column-start: 2;
+  }
+
+  section {
+    display: contents;
+    font-size: var(--text-lg);
+  }
+}
+```
+</CodeGroup>
+
+## Links to Portfolio Sections
+
+The About page naturally leads visitors to explore:
+
+- **Work Portfolio** (`/work`) - View completed projects across all expertise areas
+- **Featured Projects** (Home page) - Quick access to the most recent work
+- **Contact Information** (Footer) - Multiple ways to get in touch for collaboration
+
+<Note>
+  The About page serves as a comprehensive introduction to Juan's professional capabilities, making it ideal for potential employers and clients to understand the breadth and depth of expertise offered.
+</Note>

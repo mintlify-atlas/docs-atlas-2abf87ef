@@ -1,0 +1,344 @@
+---
+title: Content Collections
+description: Understand Astro's content collections system and schema validation with Zod
+---
+
+Astro's Content Collections provide type-safe content management with automatic validation and TypeScript support.
+
+## What are Content Collections?
+
+Content Collections are a way to organize and validate markdown/MDX content in Astro projects. They provide:
+
+- **Type safety**: Automatic TypeScript types for your content
+- **Schema validation**: Ensure all content has required fields
+- **Better performance**: Optimized content loading and querying
+- **Developer experience**: Autocomplete and type checking in your editor
+
+## Collection Configuration
+
+The `work` collection is defined in `src/content/work/config.ts`:
+
+```typescript src/content/work/config.ts
+import { defineCollection, z } from 'astro:content';
+
+export const collections = {
+  work: defineCollection({
+    schema: z.object({
+      title: z.string(),
+      description: z.string(),
+      publishDate: z.coerce.date(),
+      tags: z.array(z.string()),
+      img: z.string(),
+      img_alt: z.string().optional(),
+    }),
+  }),
+};
+```
+
+## Schema Breakdown
+
+Each field in the schema defines a validation rule using [Zod](https://zod.dev/):
+
+### title
+
+```typescript
+title: z.string()
+```
+
+- **Type**: String
+- **Required**: Yes
+- **Validation**: Must be a non-empty string
+- **Example**: `"VST Plugins"`
+
+### description
+
+```typescript
+description: z.string()
+```
+
+- **Type**: String
+- **Required**: Yes
+- **Validation**: Must be a non-empty string
+- **Example**: Multi-line project description
+
+### publishDate
+
+```typescript
+publishDate: z.coerce.date()
+```
+
+- **Type**: Date
+- **Required**: Yes
+- **Coercion**: Automatically converts strings to Date objects
+- **Format**: `YYYY-MM-DD HH:MM:SS` or any valid date string
+- **Example**: `2024-03-10 00:00:00`
+
+<Info>
+  `z.coerce.date()` automatically converts string dates from frontmatter into JavaScript Date objects, making it easy to sort and format dates.
+</Info>
+
+### tags
+
+```typescript
+tags: z.array(z.string())
+```
+
+- **Type**: Array of strings
+- **Required**: Yes
+- **Validation**: Must be an array with at least one string element
+- **Example**: `["AI", "Web App", "React"]`
+
+### img
+
+```typescript
+img: z.string()
+```
+
+- **Type**: String
+- **Required**: Yes
+- **Format**: Path relative to `public/` directory
+- **Example**: `/assets/stock-2.jpg`
+
+### img_alt
+
+```typescript
+img_alt: z.string().optional()
+```
+
+- **Type**: String
+- **Required**: No
+- **Purpose**: Accessibility - alternative text for images
+- **Example**: `"AudioGPT application interface"`
+
+## Querying Collections
+
+Access content collections in your Astro components:
+
+### Get All Projects
+
+```typescript
+import { getCollection } from 'astro:content';
+
+const allProjects = await getCollection('work');
+```
+
+### Get Sorted Projects
+
+```typescript
+import { getCollection } from 'astro:content';
+
+const projects = await getCollection('work');
+const sortedProjects = projects.sort(
+  (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
+);
+```
+
+### Filter Projects by Tag
+
+```typescript
+import { getCollection } from 'astro:content';
+
+const projects = await getCollection('work');
+const webProjects = projects.filter(project =>
+  project.data.tags.includes('Web Development')
+);
+```
+
+### Get Single Project
+
+```typescript
+import { getEntry } from 'astro:content';
+
+const project = await getEntry('work', 'audiogpt');
+```
+
+## Type Safety
+
+Astro automatically generates TypeScript types for your collections:
+
+```typescript
+import type { CollectionEntry } from 'astro:content';
+
+// Type for a work collection entry
+type WorkProject = CollectionEntry<'work'>;
+
+// Type for just the frontmatter data
+type WorkData = CollectionEntry<'work'>['data'];
+
+// Use in component props
+interface Props {
+  project: WorkProject;
+}
+```
+
+### Example Component with Types
+
+```astro src/components/ProjectCard.astro
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'work'>;
+}
+
+const { project } = Astro.props;
+const { title, description, img, tags } = project.data;
+---
+
+<article>
+  <img src={img} alt={project.data.img_alt} />
+  <h2>{title}</h2>
+  <p>{description}</p>
+  <ul>
+    {tags.map(tag => <li>{tag}</li>)}
+  </ul>
+</article>
+```
+
+## Validation Errors
+
+If your content doesn't match the schema, you'll get helpful error messages:
+
+```bash
+Error: Invalid frontmatter for src/content/work/my-project.md:
+  - title: Required
+  - publishDate: Expected date, received string "invalid-date"
+  - tags: Expected array, received undefined
+```
+
+## Extending the Schema
+
+Add new fields to the schema as needed:
+
+```typescript src/content/work/config.ts
+import { defineCollection, z } from 'astro:content';
+
+export const collections = {
+  work: defineCollection({
+    schema: z.object({
+      title: z.string(),
+      description: z.string(),
+      publishDate: z.coerce.date(),
+      tags: z.array(z.string()),
+      img: z.string(),
+      img_alt: z.string().optional(),
+      // New fields
+      featured: z.boolean().default(false),
+      githubUrl: z.string().url().optional(),
+      liveUrl: z.string().url().optional(),
+      status: z.enum(['completed', 'in-progress', 'archived']).default('completed'),
+    }),
+  }),
+};
+```
+
+### Using Extended Schema
+
+```markdown src/content/work/my-project.md
+---
+title: My Project
+description: A great project
+publishDate: 2024-03-15 00:00:00
+tags: ["Web Development"]
+img: /assets/project.jpg
+featured: true
+githubUrl: https://github.com/user/project
+liveUrl: https://project.example.com
+status: in-progress
+---
+```
+
+## Schema Validation Options
+
+### Optional Fields
+
+```typescript
+field: z.string().optional()  // Can be undefined
+```
+
+### Default Values
+
+```typescript
+featured: z.boolean().default(false)  // Defaults to false if not provided
+```
+
+### Enums
+
+```typescript
+status: z.enum(['draft', 'published', 'archived'])
+```
+
+### URLs
+
+```typescript
+website: z.string().url()  // Validates URL format
+```
+
+### Numbers
+
+```typescript
+rating: z.number().min(1).max(5)  // Number between 1 and 5
+```
+
+### Arrays with Validation
+
+```typescript
+tags: z.array(z.string()).min(1).max(10)  // 1-10 tags
+```
+
+## Multiple Collections
+
+You can define multiple collections:
+
+```typescript src/content/config.ts
+import { defineCollection, z } from 'astro:content';
+
+export const collections = {
+  work: defineCollection({
+    schema: z.object({
+      // work schema...
+    }),
+  }),
+  blog: defineCollection({
+    schema: z.object({
+      title: z.string(),
+      author: z.string(),
+      publishDate: z.coerce.date(),
+      content: z.string(),
+    }),
+  }),
+};
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Keep schemas strict" icon="shield-check">
+    Require essential fields and use optional() sparingly to maintain content quality.
+  </Card>
+  <Card title="Use coercion wisely" icon="arrows-rotate">
+    `z.coerce.date()` is helpful for date strings, but validate other types explicitly.
+  </Card>
+  <Card title="Leverage TypeScript" icon="code">
+    Use the generated types throughout your application for type safety.
+  </Card>
+  <Card title="Document your schema" icon="book">
+    Add comments explaining the purpose and format of each field.
+  </Card>
+</CardGroup>
+
+## Check Content Validity
+
+Run Astro's content checking:
+
+```bash
+npm run astro check
+```
+
+This validates all content against your schemas and checks for TypeScript errors.
+
+## Next Steps
+
+- [Markdown Frontmatter](/development/markdown-frontmatter) - Detailed field reference
+- [Adding Projects](/development/adding-projects) - Create new validated projects
+- [Astro Content Collections Docs](https://docs.astro.build/en/guides/content-collections/) - Official documentation

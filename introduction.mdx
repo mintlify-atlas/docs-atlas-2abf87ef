@@ -1,0 +1,135 @@
+---
+title: Introduction
+description: Overview of Juan Roccia's portfolio website built with Astro
+---
+
+# Introduction
+
+Welcome to the documentation for Juan Roccia's portfolio website - a modern, performant personal website showcasing professional work, skills, and expertise in web development, automation, and artificial intelligence.
+
+## What is This Portfolio?
+
+This portfolio is a professionally designed personal website built with [Astro](https://astro.build), a modern web framework that delivers exceptional performance through partial hydration and minimal JavaScript. The site serves as a comprehensive showcase of Juan Roccia's professional work, technical expertise, and professional background.
+
+<Note>
+  The portfolio is deployed at [juanroccia.github.io](https://juanroccia.github.io) and features a fully responsive design optimized for all device types.
+</Note>
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="Content Collections" icon="folder-open">
+    Astro's content collections provide type-safe content management for portfolio projects with automatic frontmatter validation
+  </Card>
+  
+  <Card title="Responsive Design" icon="mobile">
+    Mobile-first design approach with carefully crafted breakpoints ensures optimal viewing on all devices
+  </Card>
+  
+  <Card title="Dynamic Routing" icon="route">
+    Automatic page generation for portfolio projects using Astro's file-based routing system
+  </Card>
+  
+  <Card title="Theme Support" icon="palette">
+    Built-in light and dark theme support with user preference persistence via localStorage
+  </Card>
+</CardGroup>
+
+## Technology Stack
+
+The portfolio leverages modern web technologies to deliver a fast, maintainable, and accessible experience:
+
+### Core Framework
+
+- **Astro 5.11.1** - Static site generator with islands architecture for optimal performance
+- **TypeScript** - Type-safe development with Astro's base TypeScript configuration
+
+### Content Management
+
+- **Astro Content Collections** - Type-safe content management with Zod schema validation
+- **Markdown/MDX** - All portfolio projects are written in Markdown for easy content updates
+
+### Styling & Design
+
+- **Custom CSS** - Hand-crafted CSS with CSS custom properties for theming
+- **Responsive Grid Layouts** - Modern CSS Grid for flexible, responsive layouts
+- **CSS Variables** - Comprehensive design system with CSS custom properties
+
+<CodeGroup>
+```typescript astro.config.mjs
+import { defineConfig } from 'astro/config'
+
+export default defineConfig({
+  site: 'https://juanroccia.github.io'
+})
+```
+
+```json package.json
+{
+  "name": "@example/portfolio",
+  "type": "module",
+  "version": "0.0.1",
+  "dependencies": {
+    "astro": "^5.11.1"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  }
+}
+```
+</CodeGroup>
+
+## Target Audience
+
+This portfolio website is designed for:
+
+1. **Potential Employers** - Showcasing professional experience, technical skills, and completed projects
+2. **Clients** - Demonstrating capabilities in web development, AI, and automation systems
+3. **Collaborators** - Connecting with other professionals for potential partnerships
+4. **Industry Peers** - Sharing knowledge and contributing to the developer community
+
+## Portfolio Sections
+
+The website is organized into key sections:
+
+- **Home** (`/`) - Hero section with dynamic tagline, featured projects, and funding options
+- **About** (`/about`) - Background, education, and detailed skill descriptions
+- **Work** (`/work`) - Complete portfolio of projects with filtering and categorization
+- **Individual Projects** (`/work/[slug]`) - Detailed project pages with descriptions and technologies
+
+## Design Philosophy
+
+The portfolio follows several key design principles:
+
+<Steps>
+  <Step title="Performance First">
+    Astro's islands architecture delivers near-zero JavaScript by default, resulting in lightning-fast page loads
+  </Step>
+  
+  <Step title="Content-Focused">
+    Clean, readable layouts that let the work speak for itself without distracting visual elements
+  </Step>
+  
+  <Step title="Accessibility">
+    Semantic HTML, proper ARIA labels, and keyboard navigation support throughout
+  </Step>
+  
+  <Step title="Mobile-First">
+    Designed for mobile devices first, then progressively enhanced for larger screens
+  </Step>
+</Steps>
+
+## Getting Started
+
+To learn more about specific features and implementation details, explore the following sections:
+
+- [About Juan Roccia](/about) - Professional background and expertise areas
+- [Portfolio Showcase](/features/portfolio-showcase) - How projects are displayed and organized
+- [Responsive Design](/features/responsive-design) - Mobile-first approach and breakpoints
+- [Content Management](/features/content-management) - Working with Astro content collections
+
+<Note>
+  This documentation covers the technical implementation and features of the portfolio website. For information about Juan Roccia's professional services, visit the [About](/about) page.
+</Note>

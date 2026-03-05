@@ -1,0 +1,159 @@
+---
+title: 'PortfolioPreview'
+description: 'A card component for displaying portfolio project previews with images and titles.'
+---
+
+## Overview
+
+The `PortfolioPreview` component creates interactive preview cards for portfolio projects. It displays a project image with an overlaid title badge and links to the full project page. The component includes smooth view transitions and hover effects for an engaging user experience.
+
+## Props
+
+<ParamField path="project" type="CollectionEntry<'work'>" required>
+  A content collection entry from the `work` collection. This object contains:
+  - `slug`: The project's URL slug
+  - `data.title`: The project title
+  - `data.img`: The project image path
+  - `data.img_alt`: Alternative text for the image (optional)
+</ParamField>
+
+## Usage
+
+### Basic Usage
+
+```astro
+import { getCollection } from 'astro:content';
+import PortfolioPreview from '../components/PortfolioPreview.astro';
+
+const projects = await getCollection('work');
+
+<PortfolioPreview project={projects[0]} />
+```
+
+### With Grid Layout
+
+```astro
+import Grid from '../components/Grid.astro';
+import PortfolioPreview from '../components/PortfolioPreview.astro';
+
+const projects = await getCollection('work');
+
+<Grid variant="offset">
+  {projects.map((project) => (
+    <li>
+      <PortfolioPreview project={project} />
+    </li>
+  ))}
+</Grid>
+```
+
+### Multiple Projects
+
+```astro
+import { getCollection } from 'astro:content';
+import PortfolioPreview from '../components/PortfolioPreview.astro';
+
+const allProjects = (await getCollection('work'))
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
+  .slice(0, 4);
+
+<section>
+  {allProjects.map((project) => (
+    <PortfolioPreview project={project} />
+  ))}
+</section>
+```
+
+## Real-World Examples
+
+**Homepage Featured Projects** (`src/pages/index.astro`):
+```astro
+const projects = (await getCollection('work'))
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
+  .slice(0, 4);
+
+<section>
+  <Grid variant="offset">
+    {projects.map((project) => (
+      <li>
+        <PortfolioPreview project={project} />
+      </li>
+    ))}
+  </Grid>
+</section>
+```
+
+**All Work Page** (`src/pages/work.astro`):
+```astro
+const projects = (await getCollection('work'))
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+
+<section>
+  <Grid>
+    {projects.map((project) => (
+      <li>
+        <PortfolioPreview project={project} />
+      </li>
+    ))}
+  </Grid>
+</section>
+```
+
+## Component Structure
+
+The component renders as a clickable card with:
+
+1. **Container**: An `<a>` tag linking to `/work/{slug}`
+2. **Title Badge**: Overlaid on the top-left with project name
+3. **Image**: Full-size background image with object-fit cover
+4. **View Transitions**: Smooth animations when navigating to project detail
+
+## Styling Features
+
+- Subtle gradient background (`--gradient-subtle`)
+- Rounded corners (0.75rem on mobile, 1.5rem on desktop)
+- Box shadow that enhances on hover
+- Title badge with semi-transparent dark background
+- Responsive heights (11rem on mobile, 22rem on desktop)
+- Lazy loading and async decoding for optimal performance
+
+## View Transitions
+
+The component uses Astro's view transitions for smooth page navigation:
+
+```astro
+<span transition:name={`title-${slug}`}>{data.title}</span>
+<img transition:name={`img-${slug}`} src={data.img} alt={data.img_alt || ''} />
+```
+
+These transitions create a seamless morphing effect when clicking through to the project detail page.
+
+## Accessibility
+
+- Semantic `<a>` element for keyboard navigation
+- Alt text support for images
+- Fallback empty string for missing alt text
+- Hover and focus states for interactive feedback
+- Proper link structure for screen readers
+
+## Performance
+
+<Tip>
+  Images use `loading="lazy"` and `decoding="async"` for optimal performance. Make sure your project images are optimized before adding them to the work collection.
+</Tip>
+
+## Content Collection Structure
+
+The component expects work entries with this structure:
+
+```typescript
+// src/content/config.ts
+const work = defineCollection({
+  schema: z.object({
+    title: z.string(),
+    img: z.string(),
+    img_alt: z.string().optional(),
+    // ... other fields
+  }),
+});
+```

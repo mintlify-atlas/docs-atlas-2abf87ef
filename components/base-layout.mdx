@@ -1,0 +1,316 @@
+---
+title: 'BaseLayout'
+description: 'The main layout wrapper for all pages with navigation, footer, and theming support.'
+---
+
+## Overview
+
+The `BaseLayout` component is the foundational layout for the entire portfolio site. It wraps all pages with consistent structure including navigation, footer, background styling, and theme management. It handles metadata, responsive backgrounds, and client-side theme persistence.
+
+## Props
+
+<ParamField path="title" type="string">
+  The page title that appears in the browser tab and search results. Passed to the `MainHead` component for SEO.
+</ParamField>
+
+<ParamField path="description" type="string">
+  The page description used for meta tags and SEO. Passed to the `MainHead` component.
+</ParamField>
+
+## Usage
+
+### Basic Page
+
+```astro
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+<BaseLayout 
+  title="Home | Juan Roccia" 
+  description="Portfolio of Juan Roccia, Full Stack Developer"
+>
+  <main>
+    <h1>Welcome to my portfolio</h1>
+    <p>Your page content here...</p>
+  </main>
+</BaseLayout>
+```
+
+### Homepage Implementation
+
+```astro
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+
+<BaseLayout
+  title="Juan Roccia | Developer & AI Enthusiast"
+  description="Full Stack Developer specializing in web development and artificial intelligence"
+>
+  <div class="stack gap-20 lg:gap-48">
+    <div class="wrapper stack gap-8 lg:gap-20">
+      <Hero title="Hola, mi nombre es Juan Roccia" align="start">
+        <!-- Hero content -->
+      </Hero>
+      <!-- More sections -->
+    </div>
+  </div>
+</BaseLayout>
+```
+
+### About Page
+
+```astro
+<BaseLayout
+  title="About | Juan Roccia"
+  description="Learn more about Juan Roccia's background and skills"
+>
+  <main class="wrapper about">
+    <Hero title="About" />
+    <!-- About content -->
+  </main>
+</BaseLayout>
+```
+
+## Real-World Examples
+
+**Homepage** (`src/pages/index.astro`):
+```astro
+<BaseLayout>
+  <div class="stack gap-20 lg:gap-48">
+    <div class="wrapper stack gap-8 lg:gap-20">
+      <header class="hero">
+        <Hero title="Hola, mi nombre es Juan Roccia" align="start">
+          <DynamicTagline />
+        </Hero>
+      </header>
+
+      <Skills />
+    </div>
+
+    <main class="wrapper stack gap-20 lg:gap-48">
+      <section class="section with-background with-cta">
+        <header class="section-header stack gap-2 lg:gap-4">
+          <h3>Selected Work</h3>
+        </header>
+
+        <div class="gallery">
+          <Grid variant="offset">
+            {projects.map((project) => (
+              <li><PortfolioPreview project={project} /></li>
+            ))}
+          </Grid>
+        </div>
+
+        <div class="cta">
+          <CallToAction href="/work/">
+            View All <Icon icon="arrow-right" size="1.2em" />
+          </CallToAction>
+        </div>
+      </section>
+    </main>
+
+    <ContactCTA />
+  </div>
+</BaseLayout>
+```
+
+**Work Detail Page** (`src/pages/work/[...slug].astro`):
+```astro
+<BaseLayout title={entry.data.title} description={entry.data.description}>
+  <div class="stack gap-20">
+    <div class="stack gap-15">
+      <header>
+        <div class="wrapper stack gap-2">
+          <a class="back-link" href="/work/">
+            <Icon icon="arrow-left" /> Work
+          </a>
+          <Hero title={entry.data.title} align="start" slug={entry.slug}>
+            <!-- Project details -->
+          </Hero>
+        </div>
+      </header>
+      <main class="wrapper">
+        <div class="stack gap-10 content">
+          {entry.data.img && <img src={entry.data.img} alt={entry.data.img_alt || ''} />}
+          <div class="content">
+            <Content />
+          </div>
+        </div>
+      </main>
+    </div>
+    <ContactCTA />
+  </div>
+</BaseLayout>
+```
+
+## Component Structure
+
+The layout consists of several layers:
+
+```astro
+<html lang="en">
+  <head>
+    <MainHead title={title} description={description} />
+  </head>
+  <body>
+    <div class="stack backgrounds">
+      <Nav />
+      <slot />
+      <Footer />
+    </div>
+    <!-- Scripts for loading and theme management -->
+  </body>
+</html>
+```
+
+## Background System
+
+The layout implements a sophisticated multi-layer background system:
+
+### Background Layers
+1. **Noise texture**: Repeating 220px pattern for subtle texture
+2. **Footer background**: Displayed at bottom of page
+3. **Main curves**: SVG overlay with blend mode
+4. **Main background**: Primary hero image
+5. **Base color**: Solid fallback color
+
+### Responsive Images
+
+**Mobile (< 50em)**:
+- 800w images for optimal performance
+- Scaled background (--bg-scale: 1.68)
+
+**Desktop (≥ 50em)**:
+- 1440w high-resolution images
+- No scaling (--bg-scale: 1)
+
+### Light/Dark Theme
+
+The layout supports automatic theme switching:
+
+```css
+:root {
+  --bg-image-main: url('/assets/backgrounds/bg-main-light-800w.jpg');
+  --bg-blend-mode: darken;
+}
+
+:root.theme-dark {
+  --bg-image-main: url('/assets/backgrounds/bg-main-dark-800w.jpg');
+  --bg-blend-mode: lighten;
+}
+```
+
+### Lazy Loading
+
+Below-the-fold backgrounds load only after the page is fully loaded:
+
+```css
+:root.loaded {
+  --bg-image-subtle-1: url('/assets/backgrounds/bg-subtle-1-light-800w.jpg');
+  --bg-image-subtle-2: url('/assets/backgrounds/bg-subtle-2-light-800w.jpg');
+  --bg-image-footer: url('/assets/backgrounds/bg-footer-light-800w.jpg');
+}
+```
+
+## Theme Management
+
+The layout includes client-side theme persistence:
+
+```javascript
+function applyTheme() {
+  const theme = localStorage.getItem('theme');
+  const isDark = theme === 'dark' || 
+                 (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  document.documentElement.classList[isDark ? 'add' : 'remove']('theme-dark');
+}
+
+applyTheme();
+window.addEventListener('astro:after-swap', applyTheme);
+```
+
+This script:
+- Reads theme preference from localStorage
+- Falls back to system preference if not set
+- Applies `theme-dark` class to `<html>` element
+- Re-applies theme after Astro page transitions
+
+## Loading State
+
+A script adds the `loaded` class when the page finishes loading:
+
+```javascript
+addEventListener('load', () => document.documentElement.classList.add('loaded'));
+```
+
+This triggers lazy loading of below-the-fold background images.
+
+## Accessibility Features
+
+- **Language attribute**: `<html lang="en">` for screen readers
+- **Semantic structure**: Proper use of header, main, footer
+- **Skip links**: Via Nav component for keyboard navigation
+- **High contrast mode**: Backgrounds disabled for forced-colors
+
+```css
+@media (forced-colors: active) {
+  .backgrounds {
+    background: none;
+    background-blend-mode: none;
+  }
+}
+```
+
+## Dependencies
+
+The layout imports and uses:
+
+- `MainHead.astro`: SEO and meta tags
+- `Nav.astro`: Site navigation
+- `Footer.astro`: Site footer
+
+Make sure these components exist in your `src/components/` directory.
+
+## Best Practices
+
+<Tip>
+  Always provide both title and description props for better SEO. Each page should have unique, descriptive metadata.
+</Tip>
+
+<Tip>
+  The layout handles all global concerns (nav, footer, backgrounds, theme). Keep page-specific content in the slot.
+</Tip>
+
+<Warning>
+  Background images are loaded from `/assets/backgrounds/`. Ensure all referenced images exist in your public directory.
+</Warning>
+
+## Performance Considerations
+
+- Lazy loading of non-critical background images
+- Responsive images at appropriate resolutions
+- CSS blend modes for visual effects without extra images
+- Theme script runs before page paint to prevent flash
+- Minimal JavaScript for theme persistence
+
+## Customization
+
+### Adding Background Images
+
+Place images in `/public/assets/backgrounds/` with this naming convention:
+- `bg-main-light-800w.jpg` / `bg-main-dark-800w.jpg`
+- `bg-main-light-1440w.jpg` / `bg-main-dark-1440w.jpg`
+- `bg-subtle-1-light-800w.jpg` / `bg-subtle-1-dark-800w.jpg`
+- And so on...
+
+### Modifying Theme Toggle
+
+The commented code shows examples of implementing a theme toggle button. Uncomment and add a button with `id="theme-toggle"` to enable manual theme switching.
+
+### Changing Breakpoints
+
+Modify the media query at `50em` to adjust when desktop styles apply:
+
+```css
+@media (min-width: 60em) {
+  /* Desktop styles */
+}
+```

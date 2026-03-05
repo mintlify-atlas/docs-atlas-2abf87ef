@@ -1,0 +1,309 @@
+---
+title: Adding Projects
+description: Create new project entries and showcase your work in the portfolio
+---
+
+Learn how to add new project entries to showcase your work in the portfolio.
+
+## Project Structure
+
+Projects are stored as markdown files in the `src/content/work/` directory. Each project is a separate `.md` file with frontmatter metadata.
+
+```
+src/content/work/
+├── config.ts           # Content collection schema
+├── audiogpt.md        # Example project
+├── vst-plugins.md     # Example project
+└── your-project.md    # Your new project
+```
+
+## Creating a New Project
+
+<Steps>
+  <Step title="Create a new markdown file">
+    Create a new `.md` file in `src/content/work/`:
+
+    ```bash
+    touch src/content/work/my-awesome-project.md
+    ```
+
+    The filename will be used as the URL slug: `/work/my-awesome-project`
+  </Step>
+
+  <Step title="Add frontmatter metadata">
+    Start with the required frontmatter fields:
+
+    ```markdown src/content/work/my-awesome-project.md
+    ---
+    title: My Awesome Project
+    publishDate: 2024-03-15 00:00:00
+    img: /assets/my-project.jpg
+    img_alt: Screenshot of My Awesome Project
+    description: |
+      A revolutionary web application that solves real-world problems with cutting-edge technology.
+    tags:
+      - Web Development
+      - React
+      - TypeScript
+      - Node.js
+    ---
+
+    ## Project Overview
+
+    Your project content goes here...
+    ```
+  </Step>
+
+  <Step title="Add project content">
+    Write the project description using markdown:
+
+    ```markdown
+    ## Features
+
+    - Feature one with detailed explanation
+    - Feature two showcasing innovation
+    - Feature three demonstrating impact
+
+    ## Technologies Used
+
+    The project leverages:
+    - React for the frontend
+    - Node.js for the backend
+    - PostgreSQL for data persistence
+
+    ## Challenges and Solutions
+
+    Describe the technical challenges you faced and how you solved them.
+    ```
+  </Step>
+
+  <Step title="Add project images">
+    Place image assets in the `public/assets/` directory:
+
+    ```bash
+    cp my-project-screenshot.jpg public/assets/
+    ```
+
+    Then reference them in your frontmatter:
+
+    ```yaml
+    img: /assets/my-project-screenshot.jpg
+    ```
+  </Step>
+</Steps>
+
+## Frontmatter Fields
+
+All projects must include these frontmatter fields:
+
+### Required Fields
+
+<ParamField path="title" type="string" required>
+  The project title displayed on the card and project page.
+
+  ```yaml
+  title: VST Plugins
+  ```
+</ParamField>
+
+<ParamField path="description" type="string" required>
+  A short description of the project. Supports multi-line text using `|` syntax.
+
+  ```yaml
+  description: |
+    Desarrollo de plugins de audio VST para producción musical,
+    procesamiento de sonido y efectos creativos.
+  ```
+</ParamField>
+
+<ParamField path="publishDate" type="date" required>
+  The publication date in `YYYY-MM-DD HH:MM:SS` format. Used for sorting projects.
+
+  ```yaml
+  publishDate: 2023-07-10 00:00:00
+  ```
+</ParamField>
+
+<ParamField path="tags" type="array" required>
+  An array of tags categorizing the project.
+
+  ```yaml
+  tags:
+    - Audio Programming
+    - Music Production
+    - DSP
+    - C++
+  ```
+</ParamField>
+
+<ParamField path="img" type="string" required>
+  Path to the project thumbnail image, relative to the `public/` directory.
+
+  ```yaml
+  img: /assets/stock-6.jpg
+  ```
+</ParamField>
+
+### Optional Fields
+
+<ParamField path="img_alt" type="string">
+  Alternative text for the project image (accessibility).
+
+  ```yaml
+  img_alt: VST Plugins interface screenshot
+  ```
+</ParamField>
+
+## Real Project Examples
+
+### Example 1: AudioGPT
+
+```markdown src/content/work/audiogpt.md
+---
+title: AudioGPT
+publishDate: 2024-03-10 00:00:00
+img: /assets/stock-2.jpg
+img_alt: AudioGPT application interface
+description: |
+  Aplicación de inteligencia artificial que convierte texto a voz
+  con diversas opciones de personalización y control.
+tags:
+  - AI
+  - Audio Generation
+  - Web App
+  - Speech Synthesis
+---
+
+## AudioGPT: Generación de voz avanzada con IA
+
+Este proyecto combina tecnologías de procesamiento de lenguaje natural
+y síntesis de voz para convertir texto en audio de alta calidad con
+diferentes voces, acentos y estilos emocionales.
+
+### Características principales
+
+- Conversión de texto a voz con múltiples opciones de personalización
+- Selección entre diferentes voces, acentos y idiomas
+- Control de parámetros como velocidad, tono y énfasis emocional
+```
+
+### Example 2: VST Plugins
+
+```markdown src/content/work/vst-plugins.md
+---
+title: VST Plugins
+publishDate: 2023-07-10 00:00:00
+img: /assets/stock-6.jpg
+img_alt: VST Plugins interface screenshot
+description: |
+  Desarrollo de plugins de audio VST para producción musical,
+  procesamiento de sonido y efectos creativos.
+tags:
+  - Audio Programming
+  - Music Production
+  - DSP
+  - C++
+---
+
+## VST Plugins: Herramientas para la producción musical digital
+
+Este proyecto comprende el desarrollo de varios plugins VST diseñados
+para mejorar el flujo de trabajo en la producción musical.
+
+### Plugins desarrollados
+
+1. **Procesador de Dinámica Multibanda**: Control preciso sobre
+   diferentes rangos de frecuencia
+2. **Sintetizador FM Modular**: Instrumento virtual basado en síntesis
+   de modulación de frecuencia
+```
+
+## Markdown Features
+
+You can use standard markdown formatting:
+
+### Headings
+
+```markdown
+## Main Section
+### Subsection
+#### Detail
+```
+
+### Lists
+
+```markdown
+- Unordered item
+- Another item
+  - Nested item
+
+1. Ordered item
+2. Second item
+```
+
+### Links
+
+```markdown
+[Visit site](https://juanroccia.github.io/)
+[GitHub Repository](https://github.com/juanroccia/project)
+```
+
+### Code Blocks
+
+```markdown
+```javascript
+const greeting = 'Hello, World!'
+console.log(greeting)
+```
+```
+
+### Emphasis
+
+```markdown
+**Bold text**
+*Italic text*
+***Bold and italic***
+```
+
+## Project Ordering
+
+Projects are displayed in reverse chronological order based on the `publishDate` field. More recent projects appear first.
+
+To feature a project at the top, use a future date or a more recent date:
+
+```yaml
+publishDate: 2024-12-01 00:00:00  # Will appear before older projects
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Use descriptive titles" icon="heading">
+    Choose clear, concise titles that accurately represent the project.
+  </Card>
+  <Card title="Write compelling descriptions" icon="file-lines">
+    The description appears on project cards. Make it engaging and informative.
+  </Card>
+  <Card title="Choose relevant tags" icon="tags">
+    Use tags that reflect the technologies and skills demonstrated.
+  </Card>
+  <Card title="Optimize images" icon="image">
+    Compress images to reduce file size while maintaining quality.
+  </Card>
+</CardGroup>
+
+## Validation
+
+The content collection schema automatically validates your projects. If you're missing required fields or have incorrect data types, you'll see an error when running the dev server.
+
+Run type checking manually:
+
+```bash
+npm run astro check
+```
+
+## Next Steps
+
+- [Content Collections](/development/content-collections) - Understand the schema and validation
+- [Markdown Frontmatter](/development/markdown-frontmatter) - Detailed field reference
+- [Building](/development/building) - Build your portfolio with the new projects

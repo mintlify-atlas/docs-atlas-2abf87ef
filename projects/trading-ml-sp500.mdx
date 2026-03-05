@@ -1,0 +1,208 @@
+---
+title: 'Algorithmic Trading with Machine Learning'
+description: 'S&P500 algorithmic trading strategy using K-Means clustering and portfolio optimization. Final project for Programming Technician degree.'
+icon: 'chart-line'
+---
+
+## Overview
+
+This project was developed as the final work for the Programming Technologies degree. It consists of developing an algorithmic trading strategy using unsupervised learning techniques (K-Means) to analyze and select S&P500 assets, optimizing portfolios and comparing their performance against the index.
+
+<Card title="Project Context" icon="graduation-cap">
+  Final project for the Programming Technician degree, focused on practical application of Machine Learning and Big Data in finance.
+</Card>
+
+## Objectives
+
+The project aimed to accomplish the following goals:
+
+<Steps>
+  <Step title="Data Collection">
+    Download and process historical price data from the S&P500
+  </Step>
+  <Step title="Technical Indicators">
+    Calculate technical indicators and relevant features for each stock
+  </Step>
+  <Step title="Liquidity Selection">
+    Select the 150 most liquid assets each month
+  </Step>
+  <Step title="Returns Calculation">
+    Calculate monthly returns for different time horizons
+  </Step>
+  <Step title="Risk Factors">
+    Download Fama-French factors and calculate rolling betas
+  </Step>
+  <Step title="Clustering & Optimization">
+    Group similar assets using K-Means and build optimal portfolios (max Sharpe ratio)
+  </Step>
+  <Step title="Performance Comparison">
+    Compare portfolio performance against the S&P500
+  </Step>
+</Steps>
+
+## Technologies & Libraries
+
+The project leverages a comprehensive Python stack for financial analysis and machine learning:
+
+<CodeGroup>
+```python Core Libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+```
+
+```python Financial Data
+import yfinance as yf
+import pandas_datareader as pdr
+from pandas_ta import *
+```
+
+```python Machine Learning
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+```
+
+```python Portfolio Optimization
+from pypfopt.efficient_frontier import EfficientFrontier
+from pypfopt import risk_models, expected_returns
+```
+</CodeGroup>
+
+### Technology Stack
+
+<CardGroup cols={2}>
+  <Card title="Python" icon="python">
+    Core programming language
+  </Card>
+  <Card title="Pandas & NumPy" icon="table">
+    Data manipulation and numerical computing
+  </Card>
+  <Card title="yfinance" icon="download">
+    Financial data acquisition
+  </Card>
+  <Card title="scikit-learn" icon="brain">
+    Machine learning algorithms (K-Means)
+  </Card>
+  <Card title="PyPortfolioOpt" icon="chart-pie">
+    Portfolio optimization
+  </Card>
+  <Card title="pandas_ta" icon="chart-candlestick">
+    Technical analysis indicators
+  </Card>
+  <Card title="Matplotlib" icon="chart-area">
+    Data visualization
+  </Card>
+  <Card title="Jupyter Notebook" icon="book">
+    Interactive development environment
+  </Card>
+</CardGroup>
+
+## Methodology
+
+The project follows a systematic approach to algorithmic trading:
+
+### 1. Data Download & Cleaning
+
+Historical stock prices from the S&P500 were obtained and technical indicators were calculated:
+
+<AccordionGroup>
+  <Accordion title="Technical Indicators">
+    - **Volatility:** Measure of price variability
+    - **RSI (Relative Strength Index):** Momentum oscillator
+    - **Bollinger Bands:** Volatility bands
+    - **ATR (Average True Range):** Volatility indicator
+    - **MACD (Moving Average Convergence Divergence):** Trend-following momentum indicator
+    - **Volume in Dollars:** Trading activity measure
+  </Accordion>
+</AccordionGroup>
+
+### 2. Liquidity Filtering
+
+The 150 most liquid assets per month were selected to ensure realistic trading operations and minimize slippage.
+
+<Info>
+  Liquidity filtering is crucial for algorithmic trading strategies to ensure that positions can be entered and exited without significant market impact.
+</Info>
+
+### 3. Returns Calculation
+
+Monthly returns were calculated for different time horizons, with outlier control to prevent skewed results.
+
+### 4. Risk Factors
+
+Fama-French factors were downloaded and rolling betas were calculated for each asset to capture systematic risk exposure.
+
+<Note>
+  The Fama-French factors (Market, Size, Value) provide a multi-factor model for understanding stock returns beyond simple market beta.
+</Note>
+
+### 5. Clustering & Optimization
+
+**K-Means clustering** was applied to group similar assets based on their characteristics, and optimal portfolios were built using the efficient frontier to maximize the Sharpe ratio.
+
+```python Key Steps
+# Cluster assets with similar characteristics
+kmeans = KMeans(n_clusters=k)
+clusters = kmeans.fit_predict(scaled_features)
+
+# Build optimal portfolio (max Sharpe ratio)
+ef = EfficientFrontier(expected_returns, cov_matrix)
+weights = ef.max_sharpe()
+```
+
+### 6. Results Comparison
+
+The optimized portfolio performance was compared against the S&P500 index to evaluate the strategy's effectiveness.
+
+## Results
+
+<Frame>
+  <img src="/assets/newplot.png" alt="Portfolio performance vs S&P500" />
+</Frame>
+
+The optimized portfolio achieved competitive results against the S&P500, demonstrating the utility of combining Machine Learning techniques with traditional financial analysis.
+
+<Check>
+  The strategy successfully identified optimal asset combinations that provided risk-adjusted returns competitive with the benchmark index.
+</Check>
+
+## Project Resources
+
+Access the complete project materials:
+
+<CardGroup cols={2}>
+  <Card 
+    title="View Jupyter Notebook" 
+    icon="book-open" 
+    href="https://nbviewer.org/github/JuanRoccia/MachineLearningUPSO/blob/main/Proyecto%20Final/Proyecto_Final_ML%26BD.ipynb"
+  >
+    Interactive notebook with full analysis
+  </Card>
+  <Card 
+    title="GitHub Repository" 
+    icon="github" 
+    href="https://github.com/JuanRoccia/MachineLearningUPSO/blob/main/Proyecto%20Final/Informe_Proyecto_Final_ML%26BD.pdf"
+  >
+    Complete project report and code
+  </Card>
+</CardGroup>
+
+## Key Takeaways
+
+<AccordionGroup>
+  <Accordion title="Machine Learning in Finance">
+    Unsupervised learning techniques like K-Means can effectively identify patterns in financial data and group assets with similar characteristics.
+  </Accordion>
+  
+  <Accordion title="Portfolio Optimization">
+    Modern portfolio theory combined with algorithmic selection can produce portfolios with attractive risk-adjusted returns.
+  </Accordion>
+  
+  <Accordion title="Practical Implementation">
+    The project demonstrates a complete pipeline from data acquisition to strategy evaluation, providing a realistic framework for algorithmic trading.
+  </Accordion>
+</AccordionGroup>
+
+<Tip>
+  This project showcases how Machine Learning and Big Data techniques can be practically applied to financial markets, providing a foundation for more sophisticated trading strategies.
+</Tip>

@@ -1,0 +1,436 @@
+---
+title: Markdown Frontmatter
+description: Complete reference for frontmatter fields in project markdown files
+---
+
+Frontmatter is the YAML metadata at the top of each project markdown file. It defines how projects are displayed and validated.
+
+## Frontmatter Structure
+
+Every project file starts with frontmatter enclosed by `---`:
+
+```markdown
+---
+title: Project Name
+publishDate: 2024-03-15 00:00:00
+img: /assets/image.jpg
+img_alt: Image description
+description: |
+  Multi-line project description
+  with details about the project.
+tags:
+  - Tag 1
+  - Tag 2
+---
+
+Project content goes here...
+```
+
+## Required Fields
+
+These fields must be present in every project file:
+
+### title
+
+<ParamField path="title" type="string" required>
+  The project name displayed on cards and the project page.
+
+  **Validation**: Non-empty string  
+  **Schema**: `z.string()`
+
+  ```yaml
+  title: VST Plugins
+  ```
+
+  ```yaml
+  title: AudioGPT
+  ```
+</ParamField>
+
+### description
+
+<ParamField path="description" type="string" required>
+  A concise summary of the project. Appears on project cards and for SEO.
+
+  **Validation**: Non-empty string  
+  **Schema**: `z.string()`  
+  **Format**: Use `|` for multi-line descriptions
+
+  **Single line**:
+  ```yaml
+  description: A revolutionary audio processing application.
+  ```
+
+  **Multi-line**:
+  ```yaml
+  description: |
+    Desarrollo de plugins de audio VST para producción musical,
+    procesamiento de sonido y efectos creativos.
+  ```
+</ParamField>
+
+### publishDate
+
+<ParamField path="publishDate" type="date" required>
+  The project publication date. Used for sorting projects (newest first).
+
+  **Validation**: Valid date string  
+  **Schema**: `z.coerce.date()`  
+  **Format**: `YYYY-MM-DD HH:MM:SS`
+
+  ```yaml
+  publishDate: 2024-03-10 00:00:00
+  ```
+
+  ```yaml
+  publishDate: 2023-07-10 00:00:00
+  ```
+
+  <Tip>
+    Projects are sorted by `publishDate` in descending order. Use more recent dates to feature projects at the top.
+  </Tip>
+</ParamField>
+
+### tags
+
+<ParamField path="tags" type="array" required>
+  An array of tags categorizing the project by technology, domain, or type.
+
+  **Validation**: Array of strings  
+  **Schema**: `z.array(z.string())`
+
+  **Technology tags**:
+  ```yaml
+  tags:
+    - React
+    - TypeScript
+    - Node.js
+    - PostgreSQL
+  ```
+
+  **Domain tags**:
+  ```yaml
+  tags:
+    - Audio Programming
+    - Music Production
+    - DSP
+    - C++
+  ```
+
+  **Mixed tags**:
+  ```yaml
+  tags:
+    - AI
+    - Audio Generation
+    - Web App
+    - Speech Synthesis
+  ```
+</ParamField>
+
+### img
+
+<ParamField path="img" type="string" required>
+  Path to the project thumbnail image.
+
+  **Validation**: String (path)  
+  **Schema**: `z.string()`  
+  **Format**: Path relative to `public/` directory, starting with `/`
+
+  ```yaml
+  img: /assets/stock-2.jpg
+  ```
+
+  ```yaml
+  img: /assets/vst-plugins-screenshot.jpg
+  ```
+
+  <Warning>
+    Images must be placed in the `public/assets/` directory. Paths must start with `/assets/`.
+  </Warning>
+</ParamField>
+
+## Optional Fields
+
+### img_alt
+
+<ParamField path="img_alt" type="string">
+  Alternative text for the project image (accessibility).
+
+  **Validation**: String  
+  **Schema**: `z.string().optional()`  
+  **Best Practice**: Always provide for accessibility
+
+  ```yaml
+  img_alt: VST Plugins interface screenshot
+  ```
+
+  ```yaml
+  img_alt: AudioGPT application interface showing text-to-speech controls
+  ```
+
+  <Info>
+    Alt text should describe the image content for screen readers and when images fail to load.
+  </Info>
+</ParamField>
+
+## Real-World Examples
+
+### Example 1: AudioGPT Project
+
+```markdown src/content/work/audiogpt.md
+---
+title: AudioGPT
+publishDate: 2024-03-10 00:00:00
+img: /assets/stock-2.jpg
+img_alt: AudioGPT application interface
+description: |
+  Aplicación de inteligencia artificial que convierte texto a voz
+  con diversas opciones de personalización y control.
+tags:
+  - AI
+  - Audio Generation
+  - Web App
+  - Speech Synthesis
+---
+
+## AudioGPT: Generación de voz avanzada con IA
+
+Project content...
+```
+
+**Key Points**:
+- Multi-line description using `|`
+- Clear, descriptive tags
+- Descriptive alt text
+- ISO date format
+
+### Example 2: VST Plugins Project
+
+```markdown src/content/work/vst-plugins.md
+---
+title: VST Plugins
+publishDate: 2023-07-10 00:00:00
+img: /assets/stock-6.jpg
+img_alt: VST Plugins interface screenshot
+description: |
+  Desarrollo de plugins de audio VST para producción musical,
+  procesamiento de sonido y efectos creativos.
+tags:
+  - Audio Programming
+  - Music Production
+  - DSP
+  - C++
+---
+
+## VST Plugins: Herramientas para la producción musical digital
+
+Project content...
+```
+
+**Key Points**:
+- Technical domain tags (DSP, C++)
+- Domain-specific description
+- Professional image alt text
+
+### Example 3: Personal Portfolio Project
+
+```markdown src/content/work/portfolio-personal.md
+---
+title: Portfolio Personal
+publishDate: 2024-03-05 00:00:00
+img: /assets/stock-2.jpg
+img_alt: Portfolio personal de Juan Roccia
+description: |
+  Portfolio personal moderno desarrollado con las últimas
+  tecnologías web para mostrar mis proyectos y habilidades.
+tags:
+  - Web Development
+  - React
+  - Vercel
+  - UI/UX
+  - Portfolio
+---
+
+## Portfolio Personal: Mi carta de presentación digital
+
+Project content...
+```
+
+**Key Points**:
+- Mix of technical and conceptual tags
+- Recent publication date
+- Engaging description
+
+## Field Format Reference
+
+### Date Formats
+
+Accepted date formats (all converted to JavaScript Date objects):
+
+```yaml
+# ISO 8601 format (recommended)
+publishDate: 2024-03-10 00:00:00
+
+# Date only
+publishDate: 2024-03-10
+
+# ISO with timezone
+publishDate: 2024-03-10T00:00:00Z
+
+# Alternative format
+publishDate: 2024-03-10T00:00:00.000Z
+```
+
+### String Formats
+
+```yaml
+# Single line
+title: Simple Title
+
+# Single line with quotes (if special characters)
+title: "Title: With Special Characters"
+
+# Multi-line with |
+description: |
+  First line of description.
+  Second line of description.
+  Preserves line breaks.
+
+# Multi-line with >
+description: >
+  First line of description.
+  Second line of description.
+  Joins lines with spaces.
+```
+
+### Array Formats
+
+```yaml
+# Inline format
+tags: ["React", "TypeScript", "Web Development"]
+
+# Block format (recommended)
+tags:
+  - React
+  - TypeScript
+  - Web Development
+
+# Mixed format (not recommended)
+tags:
+  - React
+  - TypeScript
+```
+
+## Validation Rules
+
+The Zod schema enforces these validation rules:
+
+<ResponseField name="title" type="string" required>
+  - Must be a non-empty string
+  - No minimum or maximum length
+  - Cannot be null or undefined
+</ResponseField>
+
+<ResponseField name="description" type="string" required>
+  - Must be a non-empty string
+  - Can be multi-line
+  - Cannot be null or undefined
+</ResponseField>
+
+<ResponseField name="publishDate" type="date" required>
+  - Must be a valid date string
+  - Automatically coerced to Date object
+  - Used for sorting (DESC order)
+</ResponseField>
+
+<ResponseField name="tags" type="array" required>
+  - Must be an array of strings
+  - Cannot be empty array
+  - Each element must be a string
+</ResponseField>
+
+<ResponseField name="img" type="string" required>
+  - Must be a string (path)
+  - Should start with `/assets/`
+  - File must exist in `public/assets/`
+</ResponseField>
+
+<ResponseField name="img_alt" type="string">
+  - Optional field
+  - Must be a string if provided
+  - Recommended for accessibility
+</ResponseField>
+
+## Common Errors and Solutions
+
+<AccordionGroup>
+  <Accordion title="Missing required field">
+    **Error**: `title: Required`
+
+    **Solution**: Add the missing field to frontmatter:
+    ```yaml
+    ---
+    title: My Project
+    # ... other fields
+    ---
+    ```
+  </Accordion>
+
+  <Accordion title="Invalid date format">
+    **Error**: `publishDate: Expected date, received string`
+
+    **Solution**: Use a valid date format:
+    ```yaml
+    # Correct
+    publishDate: 2024-03-10 00:00:00
+
+    # Incorrect
+    publishDate: March 10, 2024
+    ```
+  </Accordion>
+
+  <Accordion title="Tags not an array">
+    **Error**: `tags: Expected array, received string`
+
+    **Solution**: Format tags as an array:
+    ```yaml
+    # Correct
+    tags:
+      - React
+      - TypeScript
+
+    # Incorrect
+    tags: React, TypeScript
+    ```
+  </Accordion>
+
+  <Accordion title="Empty tags array">
+    **Error**: `tags: Array must contain at least 1 element(s)`
+
+    **Solution**: Add at least one tag:
+    ```yaml
+    tags:
+      - Web Development
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Testing Frontmatter
+
+Validate your frontmatter:
+
+```bash
+# Check all content collections
+npm run astro check
+
+# Run dev server (validates on startup)
+npm run dev
+```
+
+Errors will show the file path and specific field issues.
+
+## Next Steps
+
+- [Adding Projects](/development/adding-projects) - Create new project files
+- [Content Collections](/development/content-collections) - Understand schema validation
+- [Building](/development/building) - Build your portfolio for production

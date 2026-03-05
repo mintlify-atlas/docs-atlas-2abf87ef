@@ -1,0 +1,137 @@
+---
+title: Installation
+description: Set up the portfolio project locally with npm, yarn, or pnpm
+---
+
+Get the portfolio up and running on your local development environment.
+
+## Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- **Node.js**: Version 20 or higher (this project uses Node.js 20 in CI/CD)
+- **Package Manager**: npm (comes with Node.js), yarn, or pnpm
+
+Check your Node.js version:
+
+```bash
+node --version
+```
+
+## Installation Steps
+
+<Steps>
+  <Step title="Clone the repository">
+    Clone the portfolio repository to your local machine:
+
+    ```bash
+    git clone https://github.com/juanroccia/juanroccia.github.io.git
+    cd juanroccia.github.io
+    ```
+  </Step>
+
+  <Step title="Install dependencies">
+    Install the project dependencies using your preferred package manager:
+
+    <CodeGroup>
+      ```bash npm
+      npm install
+      ```
+
+      ```bash yarn
+      yarn install
+      ```
+
+      ```bash pnpm
+      pnpm install
+      ```
+    </CodeGroup>
+
+    The project uses the following main dependency:
+
+    - **astro**: ^5.11.1 - The Astro framework powering the portfolio
+  </Step>
+
+  <Step title="Start the development server">
+    Run the development server:
+
+    <CodeGroup>
+      ```bash npm
+      npm run dev
+      ```
+
+      ```bash yarn
+      yarn dev
+      ```
+
+      ```bash pnpm
+      pnpm dev
+      ```
+    </CodeGroup>
+
+    The development server will start at `http://localhost:4321` by default.
+  </Step>
+</Steps>
+
+## Available Commands
+
+All commands are run from the root of the project:
+
+| Command | Action |
+|---------|--------|
+| `npm run dev` or `npm start` | Starts local dev server at `localhost:4321` |
+| `npm run build` | Build your production site to `./dist/` |
+| `npm run preview` | Preview your build locally, before deploying |
+| `npm run astro` | Run CLI commands like `astro add`, `astro check` |
+| `npm run astro -- --help` | Get help using the Astro CLI |
+
+## Verify Installation
+
+Once the development server is running, open your browser and navigate to `http://localhost:4321`. You should see the portfolio homepage.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Port already in use">
+    If port 4321 is already in use, Astro will automatically try the next available port. Check the terminal output for the actual URL.
+  </Accordion>
+
+  <Accordion title="Node version mismatch">
+    Ensure you're using Node.js 20 or higher. You can use [nvm](https://github.com/nvm-sh/nvm) to manage multiple Node.js versions:
+
+    ```bash
+    nvm install 20
+    nvm use 20
+    ```
+  </Accordion>
+
+  <Accordion title="Dependencies fail to install">
+    Try clearing your package manager cache:
+
+    <CodeGroup>
+      ```bash npm
+      npm cache clean --force
+      rm -rf node_modules package-lock.json
+      npm install
+      ```
+
+      ```bash yarn
+      yarn cache clean
+      rm -rf node_modules yarn.lock
+      yarn install
+      ```
+
+      ```bash pnpm
+      pnpm store prune
+      rm -rf node_modules pnpm-lock.yaml
+      pnpm install
+      ```
+    </CodeGroup>
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+- [Configuration](/development/configuration) - Learn how to customize the site settings
+- [Adding Projects](/development/adding-projects) - Create new project entries
+- [Building](/development/building) - Build the site for production
